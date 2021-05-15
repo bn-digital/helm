@@ -1,0 +1,112 @@
+# Default values for nodejs.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+nameOverride: ''
+fullnameOverride: ''
+
+replicaCount: 1
+
+image: library/node
+imagePullPolicy: Always
+
+podAnnotations:
+  git/sha256: ''
+  git/branch: ''
+  app.kubernetes.io/env: production
+
+podSecurityContext: { }
+# fsGroup: 2000
+
+volumes: [ ]
+#  - name: media-library
+#    path: public/uploads
+#    persistence:
+#      enabled: false
+#      size: 2Gi
+
+securityContext: { }
+# readOnlyRootFilesystem: true
+# runAsNonRoot: true
+# runAsUser: 1000
+#
+service:
+  type: ClusterIP
+  port: 80
+
+vault:
+  enabled: false
+  role: app
+  secrets:
+    database: /staging/postgresql
+    s3: /staging/digitalocean/spaces
+
+serviceAccount: { }
+#  name: app
+
+imagePullSecrets: [ ]
+
+envSecrets: [ ]
+
+configMapsSecrets: [ ]
+
+app:
+  name: nodejs
+  workingDir: /usr/local/src
+  port: 5000
+  uploadSize: 5m
+  env: { }
+
+ingress:
+  className: 'nginx'
+  enabled: false
+  annotations: { }
+  tls: true
+  host: chart-example.local
+  fallbackHost: ''
+  path: /
+  proxies: []
+#    - path: /graphql
+#      backend:
+#        service: backend
+#        port: 5000
+
+priorityClassName: ''
+
+resources:
+  { }
+# We usually recommend not to specify default resources and to leave this as a conscious
+# choice for the user. This also increases chances charts run on environments with little
+# resources, such as Minikube. If you do want to specify resources, uncomment the following
+# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+# limits:
+#   cpu: 100m
+#   memory: 128Mi
+# requests:
+#   cpu: 100m
+#   memory: 128Mi
+
+nodeSelector: { }
+
+tolerations: [ ]
+
+affinity: { }
+
+metrics:
+  enabled: false
+  image:
+    registry: docker.io
+    repository: bitnami/nodejs-exporter
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 9464
+    annotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/port: "{{ .Values.metrics.service.port }}"
+  serviceMonitor:
+    enabled: false
+    interval: 5s
+    scrapeTimeout: 10s
+    honorLabels: true
+    relabellings:

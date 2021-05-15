@@ -1,0 +1,12 @@
+dependencies:
+- name: nodejs
+  repository: https://dcr.bndigital.dev/chartrepo/library
+  version: 1.0.0
+- name: nodejs
+  repository: https://dcr.bndigital.dev/chartrepo/library
+  version: 1.0.0
+- name: mysql
+  repository: https://charts.bitnami.com/bitnami
+  version: 8.5.8
+digest: sha256:d6fd4928f6bfc53ee76cccbbf891f4fcdcb930f0198eee8483a73a8fb6e15064
+generated: "2021-05-15T21:57:40.694455+03:00"

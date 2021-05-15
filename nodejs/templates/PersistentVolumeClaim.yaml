@@ -1,0 +1,14 @@
+{{ $fullname := include "nodejs.fullname" . }}
+{{- with $claims := .Values.volumes }} {{ range $index,$volume := $claims }} {{ if $volume.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ printf "%s-%s" $fullname $volume.name }}
+  labels: {{ include "nodejs.labels" $ | nindent 4 }}
+spec:
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ $volume.persistence.size }} {{ end }} {{ end }} {{ end }}

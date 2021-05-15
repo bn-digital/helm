@@ -1,0 +1,10 @@
+certManager:
+  enabled: true
+  name: letsencrypt
+  server: https://acme-v02.api.letsencrypt.org/directory
+  email: admin@bndigital.dev
+
+database:
+  enabled: false
+  backup:
+    enabled: true
