@@ -1,0 +1,10 @@
+apiVersion: v2
+name: app
+description: Common Web application Helm Chart
+type: application
+version: 1.0.0
+appVersion: 1.0.0
+icon: https://icon-library.com/images/react-icon/react-icon-29.jpg
+keywords:
+  - web
+  - http

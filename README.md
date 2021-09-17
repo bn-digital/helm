@@ -9,9 +9,9 @@ helm repo add bndigital https://dcr.bndigital.dev/chartrepo/library
 helm install my-release bndigital/<chart>
 ```
 
-## NodeJS
+## App
 
-This chart bootstraps a Node deployment on a Kubernetes cluster using the Helm package manager.
+This chart bootstraps a web app deployment on a Kubernetes cluster using the Helm package manager.
 
 ### Prerequisites 
 
@@ -22,24 +22,9 @@ This chart bootstraps a Node deployment on a Kubernetes cluster using the Helm p
 
 #### Optional 
 
-- PV provisioner
-- Ingress Controller
-- Prometheus Operator
+- PV provisioner (in case you need persistence volume claim for you application)
+- Cert Manager (in case you want to terminate SSL with LetsEncrypt for your ingress)
 
 ### Parameters 
 
-The following table lists the configurable parameters of the Node chart and their default values.
-
-#### Common Parameters
-
-| Parameter | Description | Default |
-| --- | ----------- | ------------- |
-| nameOverride | String to partially override node.fullname template | "" |
-
-#### Application
-
-| Parameter | Description | Default |
-| --- | ----------- | ------------- |
-| app.name | Application name | nodejs | 
-| app.port | Port where the application will be running | 5000 | 
-| app.workingDir | Port where the application will be running | 5000 | 
+See [Chart](charts/app) for more details.

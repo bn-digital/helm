@@ -1,0 +1,69 @@
+{{ $fullname := include "app.fullname" . }}
+{{ $app := .Values.app }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullname }}
+  labels: {{ include "app.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+  selector:
+    matchLabels: {{ include "app.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations: {{ include "app.podAnnotations" . | nindent 8 }}
+      labels: {{ include "app.selectorLabels" . | nindent 8 }}
+    spec: {{ with $imagePullSecrets := .Values.imagePullSecrets }}
+      imagePullSecrets: {{ range $imagePullSecrets }}
+        - name: {{ tpl . $ }} {{ end }} {{ end }} {{ with $volumes := .Values.volumes }}
+      volumes: {{ range  $volumes }}
+        - name: {{ .name }} {{ if .persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ printf "%s-%s" $fullname .name }} {{ else }}
+          emptyDir: { } {{ end }} {{ end }} {{ end }}
+      securityContext: {{ toYaml .Values.podSecurityContext | nindent 8 }} {{ with .Values.nodeSelector }}
+      nodeSelector: {{ toYaml . | nindent 8 }} {{ end }} {{ with .Values.affinity }}
+      affinity: {{ toYaml . | nindent 8 }} {{ end }} {{ with .Values.tolerations }}
+      tolerations: {{ toYaml . | nindent 8 }} {{ end }} {{ with .Values.priorityClassName }}
+      priorityClassName: {{ . }} {{ end }}
+      serviceAccountName: {{ if .Values.serviceAccount.create }} {{ $fullname  }} {{ else }} {{ .Values.serviceAccount.name }} {{ end }}
+      containers:
+        - name: {{ .Values.app.name }}
+          image: {{ .Values.image | quote }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }} {{ with .Values.app.workingDir }}
+          workingDir: {{ . }} {{ end }} {{ with $command := .Values.app.command }}
+          command: {{ range $command }}
+            - {{ . | quote }}{{ end }} {{ end }} {{ with $args := .Values.app.args  }}
+          args: {{ range $args }}
+            - {{ . | quote }} {{ end }} {{ end }}
+          securityContext: {{ toYaml .Values.securityContext | nindent 12 }}  {{ with $volumes := .Values.volumes }}
+          volumeMounts: {{ range $volumes }}
+            - mountPath: {{ printf "%s/%s" $app.workingDir .path }}
+              name: {{ .name }} {{ end }} {{ end }}
+          envFrom: {{ with $secrets := .Values.secrets }} {{ range $secrets }}
+            - secretRef:
+                optional: true
+                name: {{ tpl . $ }} {{ end }} {{ end }} {{ with $configMaps := .Values.configMaps }}  {{ range $configMaps }}
+            - configMapRef:
+                optional: true
+                name: {{ tpl . $ }} {{ end }} {{ end }}
+            - secretRef:
+                optional: false
+                name: {{ printf "%s-%s" .Release.Name "env" }}
+          resources: {{ toYaml .Values.resources | nindent 12 }} {{ if .Values.readinessProbe.enabled }}
+          ports:
+            - containerPort: {{ .Values.app.port }}
+              name: {{ .Values.service.name }}
+          readinessProbe: {{ if .Values.readinessProbe.enabled }}
+            initialDelaySeconds: 15
+            httpGet:
+              port: {{ .Values.app.port }}
+              path: {{ .Values.ingress.path }} {{ end }} {{ if .Values.livenessProbe.enabled }}
+          livenessProbe:
+            httpGet:
+              port: {{ .Values.app.port }}
+              path: {{ .Values.ingress.path }} {{ end }} {{ end }}

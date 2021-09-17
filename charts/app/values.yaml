@@ -1,0 +1,126 @@
+# Default values for nodejs.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+nameOverride: ''
+fullnameOverride: ''
+
+replicaCount: 1
+
+image: library/node
+imagePullPolicy: Always
+imagePullSecrets: [ ]
+imageRegistry:
+  { }
+#  url: dcr.bndigital.dev
+#  username: ''
+#  password: ''
+
+podAnnotations:
+  app.kubernetes.io/environment: production
+
+podSecurityContext: { }
+# fsGroup: 2000
+
+volumes: [ ]
+#  - name: media-library
+#    path: public/uploads
+#    persistence:
+#      enabled: false
+#      size: 2Gi
+
+securityContext: { }
+# readOnlyRootFilesystem: true
+# runAsNonRoot: true
+# runAsUser: 1000
+#
+service:
+  name: http
+  type: ClusterIP
+  port: 80
+
+serviceAccount:
+  create: true
+  name: app
+
+# -- Names of existing external secrets to use. Optionals for safety
+secrets: [ ]
+
+# -- Names of existing external secrets to use. Optionals for safety
+configMaps: [ ]
+
+app:
+  name: nodejs
+  command: [ ]
+  args: [ ]
+  workingDir: ''
+  # -- Environment variables required for application (will be referenced to Secret)
+  env:
+    NODE_ENV: production
+  # -- Container port used by application web server
+  port: 5000
+
+ingress:
+  secretName: ''
+  className: nginx
+  annotations:
+    { }
+  tls:
+    enabled: true
+    issuer:
+      enabled: false
+      name: letsencrypt
+      email: email@test.com
+      server: https://acme-v02.api.letsencrypt.org/directory
+  host: ''
+  fallbackHost: ''
+  path: /
+  pathType: Prefix
+  uploadSize: 5m
+  proxy:
+    enabled: false
+    path: ''
+    implementation: graphql # see possible keys in ingress.proxy.templates
+    pathType: ImplementationSpecific
+    templates:
+      strapi:
+        path: /(admin|auth|import-export-content|callback|connect|content-manager|content-type-builder|graphql|email|email-designer|entity-relationship-chart|i18n|register|responsive-image|users-permissions|upload|uploads)(.*)
+        pathType: ImplementationSpecific
+      api:
+        path: /api
+        pathType: Prefix
+      graphql:
+        path: /graphql
+        pathType: Exact
+    backend:
+      service: '{{ printf "%s-%s" .Release.Name .Chart.Name }}'
+      port: 80
+
+priorityClassName: ''
+
+livenessProbe:
+  enabled: true
+
+readinessProbe:
+  enabled: true
+
+startupProbe:
+  enabled: true
+
+resources:
+  { }
+# We usually recommend not to specify default resources and to leave this as a conscious
+# choice for the user. This also increases chances charts run on environments with little
+# resources, such as Minikube. If you do want to specify resources, uncomment the following
+# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+# limits:
+#   cpu: 100m
+#   memory: 128Mi
+# requests:
+#   cpu: 100m
+#   memory: 128Mi
+
+nodeSelector: { }
+
+tolerations: [ ]
+
+affinity: { }

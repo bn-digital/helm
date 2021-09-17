@@ -1,0 +1,41 @@
+{{- $host := .Values.ingress.host -}}
+{{- if $host -}}
+{{- $fullName := include "app.fullname" . -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}
+  labels: {{ include "app.labels" . | nindent 4 }}
+  annotations: {{ with .Values.ingress.annotations }} {{ toYaml . | nindent 4 }} {{ end }} {{ if .Values.ingress.tls }}
+    kubernetes.io/tls-acme: "true" {{ end }}
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/from-to-www-redirect: "true" {{ with .Values.ingress.uploadSize }}
+    nginx.ingress.kubernetes.io/proxy-body-size: {{ . | quote }} {{ end }} {{ with .Values.ingress.tls.issuer }} {{ if .enabled }}
+    cert-manager.io/issuer: {{ printf "%s-%s" $.Release.Name .name }} {{ end }}
+    cert-manager.io/common-name: {{ $host }} {{ end }}
+spec:
+  ingressClassName: {{ .Values.ingress.className }}  {{ with .Values.ingress.tls }} {{ if .enabled }}
+  tls:
+    - hosts:
+        - {{ $host | quote }}
+        - {{ printf "%s.%s" "www" $host | quote }}
+      secretName: {{ $.Values.ingress.secretName | default $host | quote }} {{ end }} {{ end }}
+  rules:
+    - host: {{ $host | quote }}
+      http:
+        paths: {{ with .Values.ingress.proxy }} {{ if .enabled }}
+          - path: {{ if not (empty .implementation) }} {{ index (index .templates .implementation) "path" }} {{ else }} {{ .path }} {{ end }}
+            pathType: {{ if not (empty .implementation) }} {{ index (index .templates .implementation) "pathType" }} {{ else }} {{ .pathType }} {{ end }}
+            backend:
+              service:
+                name: {{ tpl .backend.service $ }}
+                port:
+                  number: {{ .backend.port | default $.Values.service.port }} {{ end }} {{ end }}
+          - path: {{ .Values.ingress.path  }}
+            pathType: {{ .Values.ingress.pathType }}
+            backend:
+              service:
+                name:  {{ $fullName }}
+                port:
+                  number: {{ .Values.service.port }} {{ end }}
+
