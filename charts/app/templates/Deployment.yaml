@@ -29,8 +29,8 @@ spec:
       nodeSelector: {{ toYaml . | nindent 8 }} {{ end }} {{ with .Values.affinity }}
       affinity: {{ toYaml . | nindent 8 }} {{ end }} {{ with .Values.tolerations }}
       tolerations: {{ toYaml . | nindent 8 }} {{ end }} {{ with .Values.priorityClassName }}
-      priorityClassName: {{ . }} {{ end }}
-      serviceAccountName: {{ if .Values.serviceAccount.create }} {{ $fullname  }} {{ else }} {{ .Values.serviceAccount.name }} {{ end }}
+      priorityClassName: {{ . }} {{ end }} {{ with .Values.serviceAccount }}
+      serviceAccountName: {{ if .create }} {{ $fullname }} {{ else }} {{ .name }} {{ end }} {{ end }}
       containers:
         - name: {{ .Values.app.name }}
           image: {{ .Values.image | quote }}
@@ -50,10 +50,10 @@ spec:
                 name: {{ tpl . $ }} {{ end }} {{ end }} {{ with $configMaps := .Values.configMaps }}  {{ range $configMaps }}
             - configMapRef:
                 optional: true
-                name: {{ tpl . $ }} {{ end }} {{ end }}
+                name: {{ tpl . $ }} {{ end }} {{ end }} {{ with .Values.app.env }}
             - secretRef:
                 optional: false
-                name: {{ printf "%s-%s" .Release.Name "env" }}
+                name: {{ printf "%s-%s" .Release.Name "env" }} {{ end }}
           resources: {{ toYaml .Values.resources | nindent 12 }} {{ if .Values.readinessProbe.enabled }}
           ports:
             - containerPort: {{ .Values.app.port }}

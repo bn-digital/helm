@@ -3,7 +3,7 @@ kind: Pod
 metadata:
   name: {{ printf "%s-%s-%s" .Release.Name .Values.app.name "test" }}
   annotations:
-    helm.sh/hook: test
+    "helm.sh/hook": test
 spec:
   restartPolicy: Never
   containers:

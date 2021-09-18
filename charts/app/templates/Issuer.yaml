@@ -1,4 +1,4 @@
-{{- with $issuer := .Values.ingress.tls.issuer }}
+{{- with $issuer := .Values.ingress.tls.issuer }} {{ if .enabled }}
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
@@ -15,4 +15,4 @@ spec:
     solvers:
       - http01:
           ingress:
-            class: {{ $.Values.ingress.className }} {{ end }}
+            class: {{ $.Values.ingress.className }} {{ end }} {{ end }}

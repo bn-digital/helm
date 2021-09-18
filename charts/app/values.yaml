@@ -38,9 +38,9 @@ service:
   type: ClusterIP
   port: 80
 
-serviceAccount:
-  create: true
-  name: app
+serviceAccount: { }
+#  create: false
+#  name: app
 
 # -- Names of existing external secrets to use. Optionals for safety
 secrets: [ ]
@@ -54,8 +54,8 @@ app:
   args: [ ]
   workingDir: ''
   # -- Environment variables required for application (will be referenced to Secret)
-  env:
-    NODE_ENV: production
+  env: { }
+#    NODE_ENV: production
   # -- Container port used by application web server
   port: 5000
 
