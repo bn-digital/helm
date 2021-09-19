@@ -9,7 +9,7 @@ helm repo add bndigital https://dcr.bndigital.dev/chartrepo/library
 helm install my-release bndigital/<chart>
 ```
 
-## App
+## Web App
 
 This chart bootstraps a web app deployment on a Kubernetes cluster using the Helm package manager.
 
@@ -23,8 +23,17 @@ This chart bootstraps a web app deployment on a Kubernetes cluster using the Hel
 #### Optional 
 
 - PV provisioner (in case you need persistence volume claim for you application)
+- Ingress Controller (in case you want to use ingresses with proxies)
 - Cert Manager (in case you want to terminate SSL with LetsEncrypt for your ingress)
 
 ### Parameters 
 
 See [Chart](charts/app) for more details.
+
+## OpenVPN
+
+This chart will install an [OpenVPN](https://openvpn.net/) server inside a kubernetes cluster.
+
+### Parameters
+
+See [Chart](charts/openvpn) for more details.

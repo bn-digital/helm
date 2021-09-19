@@ -1,0 +1,73 @@
+nameOverride:
+fullnameOverride:
+
+image:
+  pullPolicy: IfNotPresent
+  repository: ghcr.io/bn-digital/docker/openvpn
+  tag: 1.0.0
+
+imagePullSecrets:
+
+ipForwardInitContainer: false
+
+nodeSelector: { }
+tolerations: [ ]
+affinity: { }
+
+openvpn:
+  DEFAULT_ROUTE_ENABLED: true
+  OVPN_K8S_POD_NETWORK: 10.0.0.0
+  OVPN_K8S_POD_SUBNET: 255.0.0.0
+#  OVPN_K8S_SVC_NETWORK:
+#  OVPN_K8S_SVC_SUBNET:
+  OVPN_NETWORK: 10.240.0.0
+  OVPN_PROTO: tcp
+  OVPN_SUBNET: 255.255.0.0
+  cipher: BF-CBC
+  serverConf:
+  clientConf:
+#  keystoreSecret:
+  ccd:
+    config: { }
+    enabled: false
+  dhcpOptionDomain: true
+  iptablesExtra: [ ]
+  istio:
+    enabled: false
+    proxy:
+      port: 15001
+  redirectGateway: true
+  taKey: false
+  useCrl: false
+persistence:
+#  storageClass: '-'
+  accessMode: ReadWriteOnce
+#  existingClaim: ''
+  enabled: true
+  size: 1Gi
+#  subPath: ''
+podAnnotations: { }
+readinessProbe:
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  successThreshold: 2
+replicaCount: 1
+resources: { }
+#  limits:
+#    cpu: 300m
+#    memory: 128Mi
+#  requests:
+#    cpu: 300m
+#    memory: 128Mi
+service:
+  clusterIP:
+  loadBalancerIP:
+  loadBalancerSourceRanges:
+  annotations: { }
+  externalIPs: [ ]
+  externalPort: 443
+  internalPort: 443
+  hostPort:
+  nodePort: 32085
+  type: ClusterIP
+updateStrategy: { }

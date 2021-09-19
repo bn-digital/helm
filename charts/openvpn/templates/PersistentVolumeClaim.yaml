@@ -1,0 +1,14 @@
+{{- with .Values.persistence }} {{ if and .enabled (not .existingClaim) }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "openvpn.fullname" $ }}
+  labels: {{ include "openvpn.labels" $ | nindent 4 }}
+spec:
+  accessModes:
+    - {{ .accessMode | quote }}
+  resources:
+    requests:
+      storage: {{ .size | quote }} {{ if .storageClass }} {{ if (eq "-" .storageClass) }}
+  storageClassName: "" {{ else }}
+  storageClassName: "{{ .storageClass }}" {{ end }} {{ end }} {{ end }} {{ end }}

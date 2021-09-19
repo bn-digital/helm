@@ -1,0 +1,23 @@
+apiVersion: v2
+description: A Helm chart to install an openvpn server inside a kubernetes cluster.  Certificate generation is also part of the deployment, and this chart will generate client keys as needed.
+name: openvpn
+version: 1.0.2
+appVersion: 2.5.2
+type: application
+icon: https://cdn.worldvectorlogo.com/logos/openvpn-2.svg
+keywords:
+  - openvpn
+  - vpn
+  - tunnel
+  - network
+  - service
+  - connectivity
+  - encryption
+home: https://openvpn.net/index.php/open-source.html
+sources:
+  - https://github.com/bn-digital/docker/tree/latest/images/openvpn
+  - https://github.com/bn-digital/helm/tree/latest/charts/openvpn
+maintainers:
+  - name: BN Enginseers
+    url: https://github.com/bn-digital
+    email: dev@bndigital.co
