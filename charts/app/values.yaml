@@ -6,7 +6,7 @@ fullnameOverride: ''
 
 replicaCount: 1
 
-image: library/node
+image: ghcr.io/bn-digital/docker/html:1.0.0
 imagePullPolicy: Always
 imagePullSecrets: [ ]
 imageRegistry:
@@ -27,6 +27,7 @@ volumes: [ ]
 #    persistence:
 #      enabled: false
 #      size: 2Gi
+initContainers:
 
 securityContext: { }
 # readOnlyRootFilesystem: true
@@ -38,9 +39,9 @@ service:
   type: ClusterIP
   port: 80
 
-serviceAccount: { }
-#  create: false
-#  name: app
+serviceAccount:
+  create: false
+  name: ''
 
 # -- Names of existing external secrets to use. Optionals for safety
 secrets: [ ]
