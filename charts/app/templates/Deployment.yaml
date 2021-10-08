@@ -58,12 +58,10 @@ spec:
           ports:
             - containerPort: {{ .Values.app.port }}
               name: {{ .Values.service.name }}
+          startupProbe: {{ if .Values.startupProbe.enabled }}
+            tcpSocket:
+              port: {{ .Values.app.port }} {{ end }}
           readinessProbe: {{ if .Values.readinessProbe.enabled }}
-            initialDelaySeconds: 15
-            httpGet:
-              port: {{ .Values.app.port }}
-              path: {{ .Values.ingress.path }} {{ end }} {{ if .Values.livenessProbe.enabled }}
-          livenessProbe:
-            httpGet:
-              port: {{ .Values.app.port }}
-              path: {{ .Values.ingress.path }} {{ end }} {{ end }}
+            initialDelaySeconds: 25
+            tcpSocket:
+              port: {{ .Values.app.port }} {{ end }} {{ end }}

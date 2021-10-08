@@ -9,19 +9,17 @@ Common Web application Helm Chart
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` |  |
-| app.args | list | `[]` |  |
-| app.command | list | `[]` |  |
-| app.env | object | `{"NODE_ENV":"production"}` | Environment variables required for application (will be referenced to Secret) |
+| app.env | object | `{}` | Environment variables required for application (will be referenced to Secret) |
+| app.host | string | `"127.0.0.1"` |  |
 | app.name | string | `"nodejs"` |  |
-| app.port | int | `5000` | Container port used by application web server |
+| app.port | int | `5000` |  |
 | app.workingDir | string | `""` |  |
 | configMaps | list | `[]` | Names of existing external secrets to use. Optionals for safety |
 | fullnameOverride | string | `""` |  |
-| image | string | `"library/node"` |  |
+| image | string | `"dcr.bndigital.dev/library/nodejs:1.0.0"` |  |
 | imagePullPolicy | string | `"Always"` |  |
 | imagePullSecrets | list | `[]` |  |
 | imageRegistry | object | `{}` |  |
-| ingress
 | ingress.annotations | object | `{}` |  |
 | ingress.className | string | `"nginx"` |  |
 | ingress.fallbackHost | string | `""` |  |
@@ -29,23 +27,32 @@ Common Web application Helm Chart
 | ingress.path | string | `"/"` |  |
 | ingress.pathType | string | `"Prefix"` |  |
 | ingress.proxy.backend.port | int | `80` |  |
-| ingress.proxy.backend.service | string | "" |  |
+| ingress.proxy.backend.service | string | `"{{ printf \"%s-%s\" .Release.Name .Chart.Name }}"` |  |
 | ingress.proxy.enabled | bool | `false` |  |
 | ingress.proxy.implementation | string | `"graphql"` |  |
 | ingress.proxy.path | string | `""` |  |
 | ingress.proxy.pathType | string | `"ImplementationSpecific"` |  |
+| ingress.proxy.templates.api.path | string | `"/api"` |  |
+| ingress.proxy.templates.api.pathType | string | `"Prefix"` |  |
+| ingress.proxy.templates.graphql.path | string | `"/graphql"` |  |
+| ingress.proxy.templates.graphql.pathType | string | `"Exact"` |  |
+| ingress.proxy.templates.strapi.path | string | `"/(admin|auth|import-export-content|callback|connect|content-manager|content-type-builder|graphql|email|email-designer|entity-relationship-chart|i18n|register|responsive-image|users-permissions|upload|uploads)(.*)"` |  |
+| ingress.proxy.templates.strapi.pathType | string | `"ImplementationSpecific"` |  |
 | ingress.secretName | string | `""` |  |
 | ingress.tls.enabled | bool | `true` |  |
-| ingress.tls.issuer.enabled | bool | `false` |  |
 | ingress.tls.issuer.email | string | `"email@test.com"` |  |
+| ingress.tls.issuer.enabled | bool | `false` |  |
 | ingress.tls.issuer.name | string | `"letsencrypt"` |  |
 | ingress.tls.issuer.server | string | `"https://acme-v02.api.letsencrypt.org/directory"` |  |
 | ingress.uploadSize | string | `"5m"` |  |
+| initContainers | string | `nil` |  |
 | livenessProbe.enabled | bool | `true` |  |
 | nameOverride | string | `""` |  |
 | nodeSelector | object | `{}` |  |
-| podAnnotations | string | `"production"` |  |
-| podSecurityContext | object | `{}` |  |
+| podAnnotations."app.kubernetes.io/environment" | string | `"production"` |  |
+| podSecurityContext.fsGroup | int | `1000` |  |
+| podSecurityContext.fsUser | int | `1000` |  |
+| podSecurityContext.runAsNonRoot | bool | `true` |  |
 | priorityClassName | string | `""` |  |
 | readinessProbe.enabled | bool | `true` |  |
 | replicaCount | int | `1` |  |
@@ -55,8 +62,8 @@ Common Web application Helm Chart
 | service.name | string | `"http"` |  |
 | service.port | int | `80` |  |
 | service.type | string | `"ClusterIP"` |  |
-| serviceAccount.create | bool | `true` |  |
-| serviceAccount.name | string | `"app"` |  |
+| serviceAccount.create | bool | `false` |  |
+| serviceAccount.name | string | `""` |  |
 | startupProbe.enabled | bool | `true` |  |
 | tolerations | list | `[]` |  |
 | volumes | list | `[]` |  |

@@ -1,0 +1,13 @@
+{{- $fullname := include "imaginary.fullname" . }} {{ with .Values.persistence }} {{ if .enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $fullname }}
+  labels: {{ include "imaginary.labels" $ | nindent 4 }}
+spec:
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .size }} {{ end }} {{ end }}

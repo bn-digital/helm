@@ -6,7 +6,7 @@ fullnameOverride: ''
 
 replicaCount: 1
 
-image: ghcr.io/bn-digital/docker/html:1.0.0
+image: dcr.bndigital.dev/library/nodejs:1.0.0
 imagePullPolicy: Always
 imagePullSecrets: [ ]
 imageRegistry:
@@ -18,8 +18,10 @@ imageRegistry:
 podAnnotations:
   app.kubernetes.io/environment: production
 
-podSecurityContext: { }
-# fsGroup: 2000
+podSecurityContext:
+  fsUser: 1000
+  fsGroup: 1000
+  runAsNonRoot: true
 
 volumes: [ ]
 #  - name: media-library
@@ -29,10 +31,11 @@ volumes: [ ]
 #      size: 2Gi
 initContainers:
 
-securityContext: { }
-# readOnlyRootFilesystem: true
-# runAsNonRoot: true
-# runAsUser: 1000
+securityContext: {}
+#  readOnlyRootFilesystem: true
+#  runAsNonRoot: true
+#  runAsUser: 1000
+#  runAsGroup: 1000
 #
 service:
   name: http
@@ -51,13 +54,14 @@ configMaps: [ ]
 
 app:
   name: nodejs
-  command: [ ]
-  args: [ ]
+#  command: [ ]
+#  args: [ ]
   workingDir: ''
   # -- Environment variables required for application (will be referenced to Secret)
   env: { }
 #    NODE_ENV: production
   # -- Container port used by application web server
+  host: 127.0.0.1
   port: 5000
 
 ingress:

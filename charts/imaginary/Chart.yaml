@@ -1,0 +1,13 @@
+apiVersion: v2
+name: imaginary
+description: A Helm chart for Imaginary - fast, simple, scalable HTTP microservice for high-level image processing
+type: application
+version: 1.0.0
+appVersion: 1.2.4
+icon: https://images.opencollective.com/imaginary/10e85d1/logo/256.png
+sources:
+  - https://github.com/bn-digital/helm/tree/latest/charts/imaginary
+maintainers:
+  - name: BN Enginseers
+    email: dev@bndigital.co
+    url: https://github.com/bn-digital
