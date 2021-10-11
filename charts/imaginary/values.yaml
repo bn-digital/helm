@@ -64,7 +64,7 @@ ingress:
       server: https://acme-v02.api.letsencrypt.org/directory
   host: ''
   path: /
-  pathType: Prefix
+  pathType: ImplementationSpecific
   uploadSize: 5m
 
 resources: {}
