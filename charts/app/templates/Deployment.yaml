@@ -43,7 +43,10 @@ spec:
           securityContext: {{ toYaml . | nindent 12 }} {{ end }} {{ with $volumes := .Values.volumes }}
           volumeMounts: {{ range $volumes }}
             - mountPath: {{ printf "%s/%s" $.Values.app.workingDir .path }}
-              name: {{ .name }} {{ end }} {{ end }} {{ if or .Values.app.env .Values.configMaps .Values.secrets }}
+              name: {{ .name }} {{ end }} {{ end }}
+          env:
+            - name: PORT
+              value: {{ .Values.service.containerPort | quote }} {{ if or .Values.app.env .Values.configMaps .Values.secrets }}
           envFrom: {{ with $secrets := .Values.secrets }} {{ range $secrets }}
             - secretRef:
                 optional: true
@@ -54,14 +57,18 @@ spec:
             - secretRef:
                 optional: true
                 name: {{ $fullname }} {{ end }} {{ end }} {{ with .Values.resources }}
-          resources: {{ toYaml . | nindent 12 }} {{ end }}{{ if .Values.readinessProbe.enabled }}
+          resources: {{ toYaml . | nindent 12 }} {{ end }}
           ports:
-            - containerPort: {{ .Values.app.port }}
-              name: {{ .Values.service.name }}
-          startupProbe: {{ if .Values.startupProbe.enabled }}
-            tcpSocket:
-              port: {{ .Values.app.port }} {{ end }}
-          readinessProbe: {{ if .Values.readinessProbe.enabled }}
-            initialDelaySeconds: 25
-            tcpSocket:
-              port: {{ .Values.app.port }} {{ end }} {{ end }}
+            - containerPort: {{ .Values.service.containerPort }} {{ if .Values.startupProbe.enabled }}
+          startupProbe:
+            httpGet:
+              port: {{ .Values.service.containerPort }} {{ end }} {{ if .Values.livenessProbe.enabled }}
+          livenessProbe:
+            httpGet:
+              scheme: {{ if and .Values.ingress.tls.enabled .Values.ingress.host }}{{ "https" | upper }}{{ else }}{{ "http" | upper }} {{ end }}
+              host: {{ .Values.ingress.host | default "127.0.0.1" }}
+              port: {{ .Values.service.containerPort }}
+              path: {{ if .Values.ingress.proxy.enabled }}{{ .Values.ingress.proxy.templates.graphql.path }}{{ else }}{{ .Values.ingress.path }} {{ end }} {{ if .Values.readinessProbe.enabled }}
+          readinessProbe:
+            httpGet:
+              port: {{ .Values.service.containerPort }} {{ end }} {{ end }}

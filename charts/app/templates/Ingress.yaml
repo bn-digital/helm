@@ -6,15 +6,15 @@ kind: Ingress
 metadata:
   name: {{ $fullName }}
   labels: {{ include "app.labels" . | nindent 4 }}
-  annotations: {{ with .Values.ingress.annotations }} {{ toYaml . | nindent 4 }} {{ end }} {{ if .Values.ingress.tls }}
-    kubernetes.io/tls-acme: "true" {{ end }}
+  annotations: {{ with .Values.ingress.annotations }} {{ toYaml . | nindent 4 }} {{ end }}
     nginx.ingress.kubernetes.io/use-regex: "true"
     nginx.ingress.kubernetes.io/from-to-www-redirect: "true" {{ with .Values.ingress.uploadSize }}
-    nginx.ingress.kubernetes.io/proxy-body-size: {{ . | quote }} {{ end }} {{ with .Values.ingress.tls.issuer }} {{ if .enabled }}
-    cert-manager.io/issuer: {{ printf "%s-%s" $.Release.Name .name }} {{ end }}
-    cert-manager.io/common-name: {{ $host }} {{ end }}
+    nginx.ingress.kubernetes.io/proxy-body-size: {{ . | quote }} {{ end }} {{ with .Values.ingress.tls }} {{ if .enabled }}
+    kubernetes.io/tls-acme: "true" {{ if .issuer.enabled }}
+    cert-manager.io/issuer: {{ printf "%s-%s" $.Release.Name .issuer.name }} {{ end }}
+    cert-manager.io/common-name: {{ $host }} {{ end }} {{ end }}
 spec:
-  ingressClassName: {{ .Values.ingress.className }}  {{ with .Values.ingress.tls }} {{ if .enabled }}
+  ingressClassName: {{ .Values.ingress.className }} {{ with .Values.ingress.tls }} {{ if .enabled }}
   tls:
     - hosts:
         - {{ $host | quote }}

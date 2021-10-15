@@ -41,6 +41,7 @@ service:
   name: http
   type: ClusterIP
   port: 80
+  containerPort: 5000
 
 serviceAccount:
   create: false
@@ -60,9 +61,6 @@ app:
   # -- Environment variables required for application (will be referenced to Secret)
   env: { }
 #    NODE_ENV: production
-  # -- Container port used by application web server
-  host: 127.0.0.1
-  port: 5000
 
 ingress:
   secretName: ''
@@ -88,7 +86,7 @@ ingress:
     pathType: ImplementationSpecific
     templates:
       strapi:
-        path: /(admin|auth|import-export-content|callback|connect|content-manager|content-type-builder|graphql|email|email-designer|entity-relationship-chart|i18n|register|responsive-image|users-permissions|upload|uploads)(.*)
+        path: /(admin|auth|import-export-content|callback|connect|content-manager|content-type-builder|graphql|email|email-designer|entity-relationship-chart|i18n|register|preview-content|responsive-image|sitemap|users-permissions|upload|uploads)(.*)
         pathType: ImplementationSpecific
       api:
         path: /api
@@ -103,13 +101,13 @@ ingress:
 priorityClassName: ''
 
 livenessProbe:
-  enabled: true
+  enabled: false
 
 readinessProbe:
   enabled: true
 
 startupProbe:
-  enabled: true
+  enabled: false
 
 resources:
   { }
