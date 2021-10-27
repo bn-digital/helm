@@ -18,7 +18,8 @@ spec:
   tls:
     - hosts:
         - {{ $host | quote }}
-        - {{ printf "%s.%s" "www" $host | quote }}
+        - {{ printf "%s.%s" "www" $host | quote }} {{ if $.Values.ingress.fallbackHost }}
+        - {{ printf "%s.%s" $.Values.ingress.fallbackHost $host | quote }} {{ end }}
       secretName: {{ $.Values.ingress.secretName | default $host | quote }} {{ end }} {{ end }}
   rules:
     - host: {{ $host | quote }}
