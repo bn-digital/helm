@@ -18,7 +18,7 @@ releases:
       component: website
     values:
       - fullnameOverride: {{ .Values.appName }}-website
-        image: {{ .Values.imageRegistry}}/{{ .Values.appName }}/website:{{ .Values.imageTag }}
+        image: {{ .Values.imageRegistry }}/{{ .Values.appName }}/website:{{ .Values.imageTag }}
         serviceAccount:
           name: {{ .Values.serviceAccountName }}
         ingress:
