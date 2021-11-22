@@ -1,6 +1,6 @@
-appName: app
-serviceAccountName: bndigital-app
-ingressDomain: bndigital.dev
+appName: "app"
+serviceAccountName: "bndigital-app"
+ingressDomain: "bndigital.dev"
 ingressBackendEnabled: true
-imageRegistry: dcr.bndigital.dev
-imageTag: latest
+imageRegistry: "dcr.bndigital.dev"
+imageTag: "latest"
