@@ -3,3 +3,4 @@ serviceAccountName: bndigital-app
 ingressDomain: bndigital.dev
 ingressBackendEnabled: true
 imageRegistry: dcr.bndigital.dev
+imageTag: latest
