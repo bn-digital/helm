@@ -9,7 +9,7 @@ helmDefaults:
 environments:
   default:
     values:
-      - imageRegistry: dcr.bndigital.dev/library
+      - imageRegistry: dcr.bndigital.dev
         ingressHost: app.bndigital.dev
         ingressProxyBackend: app-cms-app
         serviceAccountName: bndigital-app
@@ -24,7 +24,7 @@ releases:
       component: website
     values:
       - fullnameOverride: '{{ .Values.appName }}-website'
-        image: '{{ .Values.imageRegistry }}/website:{{ env "GITHUB_SHA" | default "latest" }}'
+        image: '{{ .Values.imageRegistry }}/{{ .Values.appName }}/website:{{ env "GITHUB_SHA" | default "latest" }}'
         serviceAccount:
           name: '{{ .Values.serviceAccountName }}
         ingress:
@@ -45,6 +45,6 @@ releases:
       component: cms
     values:
       - fullnameOverride: '{{ .Values.appName }}-cms'
-        image: '{{ .Values.imageRegistry }}/cms:{{ env "GITHUB_SHA" | default "latest" }}'
+        image: '{{ .Values.imageRegistry }}/{{ .Values.appName }}/cms:{{ env "GITHUB_SHA" | default "latest" }}'
         serviceAccount:
           name: '{{ .Values.serviceAccountName }}
