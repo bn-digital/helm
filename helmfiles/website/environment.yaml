@@ -1,7 +1,8 @@
 environments:
   default:
     values:
-      - defaults.yaml
+      - defaults.yaml.gotmpl
   staging:
     values:
-      - defaults.yaml
+      - defaults.yaml.gotmpl
+      - ../staging.yaml.gotmpl

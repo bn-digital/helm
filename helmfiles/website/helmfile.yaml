@@ -12,19 +12,27 @@ helmDefaults:
 releases:
   - name: app-website
     namespace: {{ .Values.environment }}
-    chart: bndigital/app
-    version: {{ .Values.chartVersion }}
+    chart: {{ .Values.chart.name }}
+    version: {{ .Values.chart.version }}
     values:
-      - nameOverride: {{ .Values.appName }}-website
+      - fullnameOverride: {{ .Values.app.name }}-{{ .Values.app.instance }}
+        app:
+          name: {{ .Values.app.name }}
+          instance: {{ .Values.app.instance }}
+        imageRegistry:
+          url: {{ .Values.imageRegistry.url }}
         replicaCount: {{ .Values.replicaCount }}
-        image: {{ .Values.imageRegistry }}/{{ .Values.appName }}/website:{{ .Values.imageTag }}
         serviceAccount:
-          name: {{ .Values.serviceAccountName }}
+          name: {{ .Values.serviceAccount.name }}
+        healthcheck:
+          host: {{ .Values.app.name }}.{{ .Values.ingress.domain }}
+          port: {{ .Values.healthcheck.path }}
+          path: {{ .Values.healthcheck.path }}
         ingress:
-          host: {{ .Values.appName }}.{{ .Values.ingressDomain }}
+          host: {{ .Values.app.name }}.{{ .Values.ingress.domain }}
           proxy:
-            enabled: {{ index .Values "ingressBackendEnabled" | default "true" }}
+            enabled: {{ index .Values "ingress.proxy.enabled" | default "true" }}
             paths:
-              - pathTemplate: strapi
+              - implementation: strapi
                 service:
-                  name: {{ .Values.appName }}-cms-app
+                  name: {{ .Values.app.name }}-cms-app

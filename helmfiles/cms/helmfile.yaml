@@ -12,13 +12,20 @@ helmDefaults:
 releases:
   - name: app-cms
     namespace: {{ .Values.environment }}
-    chart: bndigital/app
-    version: {{ .Values.chartVersion }}
+    chart: {{ .Values.chart.name }}
+    version: {{ .Values.chart.version }}
     labels:
       component: cms
     values:
-      - nameOverride: {{ .Values.appName }}-cms
+      - app:
+          name: {{ .Values.app.name }}
+          instance: {{ .Values.app.instance }}
         replicaCount: {{ .Values.replicaCount }}
-        image: {{ .Values.imageRegistry }}/{{ .Values.appName }}/cms:{{ .Values.imageTag }}
+        imageRegistry:
+          url: {{ .Values.imageRegistry.url }}
+        healthcheck:
+          host: {{ .Values.app.name }}.{{ .Values.ingress.domain }}
+          port: {{ .Values.healthcheck.port }}
+          path: {{ .Values.healthcheck.path }}
         serviceAccount:
-          name: '{{ .Values.serviceAccountName }}'
+          name: '{{ .Values.serviceAccount.name }}'

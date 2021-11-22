@@ -1,5 +1,5 @@
 {{- define "app.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- default .Values.app.component .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{- define "app.fullname" -}}
@@ -33,6 +33,6 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
 {{- define "app.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "app.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/name: {{ .Values.app.name }}
+app.kubernetes.io/instance: {{ .Values.app.instance }}
 {{- end }}

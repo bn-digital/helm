@@ -1,8 +1,9 @@
+{{ $name := include "app.name" .}}
 {{ with .Values.database }} {{ if and .enabled .backup.enabled }}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ printf "%s-%s" $.Release.Name "database-backup" }}
+  name: {{ printf "%s-%s" $name "database-backup" }}
   labels: {{ include "app.labels" $ | nindent 4 }}
 spec:
   schedule: {{ .backup.schedule }}
@@ -17,7 +18,7 @@ spec:
               envFrom:
                 - secretRef:
                     optional: true
-                    name: {{ printf "%s-%s" $.Release.Name "s3" }}
+                    name: {{ printf "%s-%s" $name "s3" }}
               env:
                 - name: S3_PREFIX
                   value: "backups"
@@ -27,30 +28,29 @@ spec:
                   valueFrom:
                     secretKeyRef:
                       key: DATABASE_HOST
-                      name: {{ printf "%s-%s" $.Release.Name "database" }}
+                      name: {{ printf "%s-%s" $name "database" }}
                 - name: POSTGRES_PORT
                   valueFrom:
                     secretKeyRef:
                       key: DATABASE_PORT
-                      name: {{ printf "%s-%s" $.Release.Name "database" }}
+                      name: {{ printf "%s-%s" $name "database" }}
                 - name: POSTGRES_DATABASE
                   valueFrom:
                     secretKeyRef:
                       key: DATABASE_NAME
-                      name: {{ printf "%s-%s" $.Release.Name "database" }}
+                      name: {{ printf "%s-%s" $name "database" }}
                 - name: POSTGRES_USER
                   valueFrom:
                     secretKeyRef:
                       key: DATABASE_USERNAME
-                      name: {{ printf "%s-%s" $.Release.Name "database" }}
+                      name: {{ printf "%s-%s" $name "database" }}
                 - name: POSTGRES_PASSWORD
                   valueFrom:
                     secretKeyRef:
                       key: DATABASE_PASSWORD
-                      name: {{ printf "%s-%s" $.Release.Name $.Values.nameOverride }}
+                      name: {{ printf "%s-%s" $name $.Values.nameOverride }}
           restartPolicy: OnFailure
       backoffLimit: 2
       completions: 1
       activeDeadlineSeconds: 120
       ttlSecondsAfterFinished: 0 {{ end }} {{ end }}
-

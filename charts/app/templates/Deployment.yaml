@@ -32,8 +32,8 @@ spec:
       serviceAccountName: {{ if .name }} {{ .name }} {{ else }} {{ $fullname }} {{ end }} {{ else }} {{ .name }} {{ end }} {{ end }} {{ with .Values.initContainers }}
       initContainers: {{ toYaml . | nindent 6 }} {{ end }}
       containers:
-        - name: {{ .Values.app.name }}
-          image: {{ .Values.image | quote }}
+        - name: {{ .Values.app.component }}
+          image: {{ default .Values.image (printf "%s/%s/%s:%s" .Values.imageRegistry.url .Values.app.name .Values.app.instance .Values.app.version) | quote }}
           imagePullPolicy: {{ .Values.imagePullPolicy }} {{ with .Values.app.workingDir }}
           workingDir: {{ . }} {{ end }} {{ with $command := .Values.app.command }}
           command: {{ range $command }}
@@ -59,16 +59,17 @@ spec:
                 name: {{ $fullname }} {{ end }} {{ end }} {{ with .Values.resources }}
           resources: {{ toYaml . | nindent 12 }} {{ end }}
           ports:
-            - containerPort: {{ .Values.service.containerPort }} {{ if .Values.startupProbe.enabled }}
-          startupProbe:
-            httpGet:
-              port: {{ .Values.service.containerPort }} {{ end }} {{ if .Values.livenessProbe.enabled }}
+            - containerPort: {{ .Values.service.containerPort }} {{ if .Values.livenessProbe.enabled }}
           livenessProbe:
             httpGet:
-              scheme: {{ if and .Values.ingress.tls.enabled .Values.ingress.host }}{{ "https" | upper }}{{ else }}{{ "http" | upper }} {{ end }}
-              host: {{ .Values.ingress.host | default "127.0.0.1" }}
-              port: {{ .Values.service.containerPort }}
-              path: {{ if .Values.ingress.proxy.enabled }}{{ .Values.ingress.proxy.templates.graphql.path }}{{ else }}{{ .Values.ingress.path }} {{ end }} {{ if .Values.readinessProbe.enabled }}
+              scheme: {{ if .Values.healthcheck.host }}{{ "https" | upper }}{{ else }}{{ "http" | upper }} {{ end }}
+              host: {{ .Values.healthcheck.host | default "127.0.0.1" }}
+              port: {{ .Values.healthcheck.port }}
+              path: {{ .Values.healthcheck.path }} {{ if .Values.readinessProbe.enabled }}
           readinessProbe:
+            initialDelaySeconds: {{ if .Release.IsInstall }}180{{ else }}15{{ end }}
             httpGet:
-              port: {{ .Values.service.containerPort }} {{ end }} {{ end }}
+              scheme: {{ if and .Values.ingress.tls.enabled .Values.ingress.host }}{{ "https" | upper }}{{ else }}{{ "http" | upper }} {{ end }}
+              host: {{ .Values.healthcheck.host }}
+              port: {{ .Values.healthcheck.port }}
+              path: {{ .Values.healthcheck.path }} {{ end }} {{ end }}

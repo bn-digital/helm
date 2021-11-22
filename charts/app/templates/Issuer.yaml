@@ -2,7 +2,7 @@
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
-  name: {{ printf "%s-%s" $.Release.Name .name }}
+  name: {{ printf "%s-%s" $.Values.app.name .name }}
   labels: {{ include "app.labels" $ | nindent 4 }}
   annotations:
     helm.sh/hook: post-install,post-upgrade

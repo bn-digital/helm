@@ -6,12 +6,11 @@ fullnameOverride: ''
 
 replicaCount: 1
 
-image: dcr.bndigital.dev/library/nodejs:1.0.0
+image: ''
 imagePullPolicy: Always
 imagePullSecrets: [ ]
 imageRegistry:
-  { }
-#  url: dcr.bndigital.dev
+  url: dcr.bndigital.dev
 #  username: ''
 #  password: ''
 
@@ -54,7 +53,10 @@ secrets: [ ]
 configMaps: [ ]
 
 app:
-  name: nodejs
+  name: app
+  instance: website
+  version: latest
+  component: nodejs
 #  command: [ ]
 #  args: [ ]
   workingDir: ''
@@ -85,7 +87,7 @@ ingress:
     www: true
     paths: []
 #      - path: '/graphql'
-#        pathTemplate: '' # see possible keys in ingress.proxy.templates
+#        implementation: '' # see possible keys in ingress.proxy.templates
 #        pathType: Prefix
 #        service:
 #          name: ''
@@ -103,14 +105,16 @@ ingress:
 
 priorityClassName: ''
 
+healthcheck:
+  host: ''
+  port: 5000
+  path: /
+
 livenessProbe:
-  enabled: false
+  enabled: true
 
 readinessProbe:
   enabled: true
-
-startupProbe:
-  enabled: false
 
 resources:
   { }

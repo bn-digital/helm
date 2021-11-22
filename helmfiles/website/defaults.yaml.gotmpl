@@ -1,0 +1,20 @@
+environment: {{ env "SKAFFOLD_PROFILE" | default "staging" }}
+replicaCount: 1
+chart:
+  name: bndigital/app
+  version: 1.2.8
+imageRegistry:
+  url: dcr.bndigital.dev
+app:
+  name: app
+  instance: website
+  version: {{ env "GITHUB_SHA" | default "latest" }}
+healthcheck:
+  port: 443
+  path: /
+ingress:
+  domain: bndigital.dev
+  proxy:
+    enabled: true
+serviceAccount:
+  name: bndigital-app
