@@ -11,18 +11,18 @@ helmDefaults:
 
 releases:
   - name: app-website
-    namespace: '{{ .Values.environment }}'
+    namespace: {{ .Environment.Name }}
     chart: bndigital/app
     version: 1.1.4
     labels:
       component: website
     values:
-      - fullnameOverride: '{{ .Values.appName }}-website'
-        image: 'dcr.bndigital.dev/{{ .Values.appName }}/website:{{ env "GITHUB_SHA" | default "latest" }}'
+      - fullnameOverride: {{ .Values.appName }}-website
+        image: {{ .Values.imageRegistry}}/{{ .Values.appName }}/website:{{ .Values.imageTag }}
         serviceAccount:
-          name: '{{ .Values.serviceAccountName }}'
+          name: {{ .Values.serviceAccountName }}
         ingress:
-          host: '{{ .Values.appName }}.{{ .Values.ingressDomain }}'
+          host: {{ .Values.appName }}.{{ .Values.ingressDomain }}
           proxy:
             enabled: {{ index .Values "ingressBackendEnabled" | default "true" }}
             paths:
@@ -31,14 +31,14 @@ releases:
                   name: {{ .Values.appName }}-cms-app
 
   - name: app-cms
-    namespace: '{{ .Environment.Name }}'
+    namespace: {{ .Environment.Name }}
     chart: bndigital/app
     installed: {{ index .Values "ingressBackendEnabled" | default "true" }}
     version: 1.1.4
     labels:
       component: cms
     values:
-      - fullnameOverride: '{{ .Values.appName }}-cms'
-        image: 'dcr.bndigital.dev/{{ .Values.appName }}/cms:{{ env "GITHUB_SHA" | default "latest" }}'
+      - fullnameOverride: {{ .Values.appName }}-cms
+        image: {{ .Values.imageRegistry}}/{{ .Values.appName }}/cms:{{ .Values.imageTag }}
         serviceAccount:
           name: '{{ .Values.serviceAccountName }}'
