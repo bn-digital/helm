@@ -1,0 +1,6 @@
+appName: app
+environment: staging
+imageRegistry: dcr.bndigital.dev
+ingressDomain: bndigital.dev
+serviceAccountName: bndigital-app
+ingressBackendEnabled: true
