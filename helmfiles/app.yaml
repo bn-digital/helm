@@ -9,13 +9,15 @@ helmDefaults:
 environments:
   default:
     values:
-      - imageRegistry: dcr.bndigital.dev
+      - appName: app
+        imageRegistry: dcr.bndigital.dev
         ingressDomain: bndigital.dev
         serviceAccountName: bndigital-app
         ingressBackendEnabled: true
   staging:
     values:
-      - imageRegistry: dcr.bndigital.dev
+      - appName: app
+        imageRegistry: dcr.bndigital.dev
         ingressDomain: bndigital.dev
         serviceAccountName: bndigital-app
         ingressBackendEnabled: true
@@ -31,7 +33,7 @@ releases:
       - fullnameOverride: '{{ .Values.appName }}-website'
         image: '{{ .Values.imageRegistry }}/{{ .Values.appName }}/website:{{ env "GITHUB_SHA" | default "latest" }}'
         serviceAccount:
-          name: '{{ .Values.serviceAccountName }}
+          name: '{{ .Values.serviceAccountName }}'
         ingress:
           host: '{{ .Values.appName }}.{{ .Values.ingressDomain }}'
           proxy:
@@ -52,4 +54,4 @@ releases:
       - fullnameOverride: '{{ .Values.appName }}-cms'
         image: '{{ .Values.imageRegistry }}/{{ .Values.appName }}/cms:{{ env "GITHUB_SHA" | default "latest" }}'
         serviceAccount:
-          name: '{{ .Values.serviceAccountName }}
+          name: '{{ .Values.serviceAccountName }}'
