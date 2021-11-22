@@ -23,7 +23,8 @@ releases:
     labels:
       component: website
     values:
-      - image: '{{ .Values.imageRegistry }}/website:{{ env "GITHUB_SHA" | default "latest" }}'
+      - fullnameOverride: '{{ .Values.appName }}-website'
+        image: '{{ .Values.imageRegistry }}/website:{{ env "GITHUB_SHA" | default "latest" }}'
         serviceAccount:
           name: '{{ .Values.serviceAccountName }}
         ingress:
@@ -43,6 +44,7 @@ releases:
     labels:
       component: cms
     values:
-      - image: '{{ .Values.imageRegistry }}/cms:{{ env "GITHUB_SHA" | default "latest" }}'
+      - fullnameOverride: '{{ .Values.appName }}-cms'
+        image: '{{ .Values.imageRegistry }}/cms:{{ env "GITHUB_SHA" | default "latest" }}'
         serviceAccount:
           name: '{{ .Values.serviceAccountName }}
