@@ -1,0 +1,44 @@
+repositories:
+  - name: bndigital
+    url: https://dcr.bndigital.dev/chartrepo/library
+
+helmDefaults:
+  createNamespace: true
+  cleanupOnFail: true
+
+environments:
+  default:
+    values:
+      - imageRegistry: dcr.bndigital.dev/library
+        ingressHost: app.bndigital.dev
+        ingressProxyBackend: app-cms-app
+        serviceAccountName: bndigital-app
+        ingressBackendEnabled: true
+
+releases:
+  - name: app-website
+    namespace: '{{ .Environment.Name }}'
+    chart: bndigital/app
+    version: 1.1.4
+    values:
+      - image: '{{ .Values.imageRegistry }}/website:{{ env "GITHUB_SHA" | default "latest" }}'
+        serviceAccount:
+          name: '{{ .Values.serviceAccountName }}
+        ingress:
+          host: '{{ .Values.ingressHost }}'
+          proxy:
+            enabled: {{ .Values.ingressBackendEnabled }}
+            paths:
+              - pathTemplate: strapi
+                service:
+                  name: {{ .Values.ingressProxyBackend }}
+
+  - name: app-cms
+    namespace: '{{ .Environment.Name }}'
+    chart: bndigital/app
+    installed: {{ .Values.ingressBackendEnabled }}
+    version: 1.1.4
+    values:
+      - image: '{{ .Values.imageRegistry }}/cms:{{ env "GITHUB_SHA" | default "latest" }}'
+        serviceAccount:
+          name: '{{ .Values.serviceAccountName }}
