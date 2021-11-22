@@ -10,8 +10,7 @@ environments:
   default:
     values:
       - imageRegistry: dcr.bndigital.dev
-        ingressHost: app.bndigital.dev
-        ingressProxyBackend: app-cms-app
+        ingressDomain: bndigital.dev
         serviceAccountName: bndigital-app
         ingressBackendEnabled: true
 
@@ -28,13 +27,13 @@ releases:
         serviceAccount:
           name: '{{ .Values.serviceAccountName }}
         ingress:
-          host: '{{ .Values.ingressHost }}'
+          host: '{{ .Values.appName }}.{{ .Values.ingressDomain }}'
           proxy:
             enabled: {{ .Values.ingressBackendEnabled }}
             paths:
               - pathTemplate: strapi
                 service:
-                  name: {{ .Values.ingressProxyBackend }}
+                  name: {{ .Values.appName }}-cms-app
 
   - name: app-cms
     namespace: '{{ .Environment.Name }}'
