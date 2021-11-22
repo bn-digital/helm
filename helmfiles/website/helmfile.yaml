@@ -1,6 +1,6 @@
 bases:
-  - defaults.yaml
---- 
+  - environment.yaml
+---
 repositories:
   - name: bndigital
     url: https://dcr.bndigital.dev/chartrepo/library
@@ -11,13 +11,14 @@ helmDefaults:
 
 releases:
   - name: app-website
-    namespace: {{ .Environment.Name }}
+    namespace: {{ .Values.environment }}
     chart: bndigital/app
     version: 1.1.4
     labels:
       component: website
     values:
       - fullnameOverride: {{ .Values.appName }}-website
+        replicaCount: {{ .Values.replicaCount }}
         image: {{ .Values.imageRegistry }}/{{ .Values.appName }}/website:{{ .Values.imageTag }}
         serviceAccount:
           name: {{ .Values.serviceAccountName }}
@@ -39,6 +40,6 @@ releases:
       component: cms
     values:
       - fullnameOverride: {{ .Values.appName }}-cms
-        image: {{ .Values.imageRegistry}}/{{ .Values.appName }}/cms:{{ .Values.imageTag }}
+        image: {{ .Values.imageRegistry }}/{{ .Values.appName }}/cms:{{ .Values.imageTag }}
         serviceAccount:
           name: '{{ .Values.serviceAccountName }}'

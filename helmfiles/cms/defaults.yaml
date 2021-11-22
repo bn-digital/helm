@@ -1,0 +1,6 @@
+environment: staging
+appName: app
+serviceAccountName: bndigital-app
+imageRegistry: dcr.bndigital.dev
+imageTag: latest
+replicaCount: 1

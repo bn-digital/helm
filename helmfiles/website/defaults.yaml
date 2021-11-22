@@ -1,0 +1,7 @@
+appName: app
+environment: staging
+ingressDomain: bndigital.dev
+imageRegistry: dcr.bndigital.dev
+imageTag: latest
+replicaCount: 1
+serviceAccountName: bndigital-app

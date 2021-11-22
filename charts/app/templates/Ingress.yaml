@@ -6,9 +6,9 @@ kind: Ingress
 metadata:
   name: {{ $fullName }}
   labels: {{ include "app.labels" . | nindent 4 }}
-  annotations: {{ with .Values.ingress.annotations }} {{ toYaml . | nindent 4 }} {{ end }}
-    nginx.ingress.kubernetes.io/use-regex: "true"
-    nginx.ingress.kubernetes.io/from-to-www-redirect: "true" {{ with .Values.ingress.uploadSize }}
+  annotations: {{ with .Values.ingress.annotations }} {{ toYaml . | nindent 4 }} {{ end }} {{ if .Values.ingress.proxy.regex }}
+    nginx.ingress.kubernetes.io/use-regex: "true" {{ end }} {{ if .Values.ingress.proxy.www }}
+    nginx.ingress.kubernetes.io/from-to-www-redirect: "true" {{ end }} {{ with .Values.ingress.uploadSize }}
     nginx.ingress.kubernetes.io/proxy-body-size: {{ . | quote }} {{ end }} {{ with .Values.ingress.tls }} {{ if .enabled }}
     kubernetes.io/tls-acme: "true" {{ if .issuer.enabled }}
     cert-manager.io/issuer: {{ printf "%s-%s" $.Release.Name .issuer.name }} {{ end }}
@@ -18,25 +18,34 @@ spec:
   tls:
     - hosts:
         - {{ $host | quote }}
-        - {{ printf "%s.%s" "www" $host | quote }} {{ if $.Values.ingress.fallbackHost }}
-        - {{ printf "%s.%s" $.Values.ingress.fallbackHost $host | quote }} {{ end }}
+        - {{ printf "%s.%s" "www" $host | quote }} {{ range $.Values.ingress.extraHosts }}
+        - {{  . | quote }} {{ end }}
       secretName: {{ $.Values.ingress.secretName | default $host | quote }} {{ end }} {{ end }}
   rules:
     - host: {{ $host | quote }}
       http:
-        paths: {{ with .Values.ingress.proxy }} {{ if .enabled }}
-          - path: {{ if not (empty .implementation) }} {{ index (index .templates .implementation) "path" }} {{ else }} {{ .path }} {{ end }}
-            pathType: {{ if not (empty .implementation) }} {{ index (index .templates .implementation) "pathType" }} {{ else }} {{ .pathType }} {{ end }}
-            backend:
-              service:
-                name: {{ tpl .backend.service $ }}
-                port:
-                  number: {{ .backend.port | default $.Values.service.port }} {{ end }} {{ end }}
+        paths:
           - path: {{ .Values.ingress.path  }}
             pathType: {{ .Values.ingress.pathType }}
             backend:
               service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ .Values.service.port }} {{ with $proxies := .Values.ingress.proxy.paths }} {{ range $proxies }}
+          - path: {{ if not (empty .pathTemplate) }} {{ index (index $.Values.ingress.proxy.templates .pathTemplate) "path" }} {{ else }} {{ .path }} {{ end }}
+            pathType: {{ if not (empty .pathTemplate) }} {{ index (index $.Values.ingress.proxy.templates .pathTemplate) "pathType" }} {{ else }} {{ .pathType | default "Prefix" }} {{ end }}
+            backend:
+              service:
+                name: {{ .service.name }}
+                port:
+                  number: {{ .service.port | default $.Values.service.port }} {{ end }} {{ end }} {{ range .Values.ingress.extraHosts }}
+    - host: {{ . }}
+      http:
+        paths:
+          - path: {{ $.Values.ingress.path }}
+            pathType: {{ $.Values.ingress.pathType }}
+            backend:
+              service:
                 name:  {{ $fullName }}
                 port:
-                  number: {{ .Values.service.port }} {{ end }}
-
+                  number: {{ $.Values.service.port }} {{ end }} {{ end }}

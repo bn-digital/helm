@@ -1,0 +1,24 @@
+bases:
+  - environment.yaml
+---
+repositories:
+  - name: bndigital
+    url: https://dcr.bndigital.dev/chartrepo/library
+
+helmDefaults:
+  createNamespace: true
+  cleanupOnFail: true
+
+releases:
+  - name: app-cms
+    namespace: {{ .Values.environment }}
+    chart: bndigital/app
+    version: 1.1.4
+    labels:
+      component: cms
+    values:
+      - replicaCount: {{ .Values.replicaCount }}
+        fullnameOverride: {{ .Values.appName }}-cms
+        image: {{ .Values.imageRegistry }}/{{ .Values.appName }}/cms:{{ .Values.imageTag }}
+        serviceAccount:
+          name: '{{ .Values.serviceAccountName }}'

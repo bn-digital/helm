@@ -75,15 +75,21 @@ ingress:
       email: email@test.com
       server: https://acme-v02.api.letsencrypt.org/directory
   host: ''
-  fallbackHost: ''
+  extraHosts: []
+#    - '*.test.local'
   path: /
   pathType: Prefix
   uploadSize: 5m
   proxy:
-    enabled: false
-    path: ''
-    implementation: graphql # see possible keys in ingress.proxy.templates
-    pathType: ImplementationSpecific
+    regex: true
+    www: true
+    paths: []
+#      - path: '/graphql'
+#        pathTemplate: '' # see possible keys in ingress.proxy.templates
+#        pathType: Prefix
+#        service:
+#          name: ''
+#          port: 80
     templates:
       strapi:
         path: /(admin|auth|import-export-content|callback|connect|content-manager|content-type-builder|graphql|email|email-designer|entity-relationship-chart|i18n|register|preview-content|responsive-image|sitemap|users-permissions|upload|uploads)(.*)
@@ -94,9 +100,6 @@ ingress:
       graphql:
         path: /graphql
         pathType: Exact
-    backend:
-      service: '{{ printf "%s-%s" .Release.Name .Chart.Name }}'
-      port: 80
 
 priorityClassName: ''
 
