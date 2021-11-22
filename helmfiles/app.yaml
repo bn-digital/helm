@@ -13,7 +13,13 @@ environments:
         ingressDomain: bndigital.dev
         serviceAccountName: bndigital-app
         ingressBackendEnabled: true
-
+  staging:
+    values:
+      - imageRegistry: dcr.bndigital.dev
+        ingressDomain: bndigital.dev
+        serviceAccountName: bndigital-app
+        ingressBackendEnabled: true
+        
 releases:
   - name: app-website
     namespace: '{{ .Environment.Name }}'
