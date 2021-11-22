@@ -2,3 +2,6 @@ environments:
   default:
     values:
       - staging.values.yaml
+  staging:
+    values:
+      - staging.values.yaml
