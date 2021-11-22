@@ -15,7 +15,7 @@ releases:
     chart: bndigital/app
     version: {{ .Values.chartVersion }}
     values:
-      - fullnameOverride: {{ .Values.appName }}-website
+      - nameOverride: {{ .Values.appName }}-website
         replicaCount: {{ .Values.replicaCount }}
         image: {{ .Values.imageRegistry }}/{{ .Values.appName }}/website:{{ .Values.imageTag }}
         serviceAccount:

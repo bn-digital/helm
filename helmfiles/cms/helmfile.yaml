@@ -17,8 +17,8 @@ releases:
     labels:
       component: cms
     values:
-      - replicaCount: {{ .Values.replicaCount }}
-        fullnameOverride: {{ .Values.appName }}-cms
+      - nameOverride: {{ .Values.appName }}-cms
+        replicaCount: {{ .Values.replicaCount }}
         image: {{ .Values.imageRegistry }}/{{ .Values.appName }}/cms:{{ .Values.imageTag }}
         serviceAccount:
           name: '{{ .Values.serviceAccountName }}'
