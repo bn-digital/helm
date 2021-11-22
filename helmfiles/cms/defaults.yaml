@@ -1,6 +1,7 @@
-environment: staging
 appName: app
-serviceAccountName: bndigital-app
+chartVersion: 1.1.4
+environment: staging
 imageRegistry: dcr.bndigital.dev
 imageTag: latest
 replicaCount: 1
+serviceAccountName: bndigital-app

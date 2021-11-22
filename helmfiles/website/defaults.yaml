@@ -1,4 +1,5 @@
 appName: app
+chartVersion: 1.1.4
 environment: staging
 ingressDomain: bndigital.dev
 imageRegistry: dcr.bndigital.dev

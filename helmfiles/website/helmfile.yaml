@@ -13,9 +13,7 @@ releases:
   - name: app-website
     namespace: {{ .Values.environment }}
     chart: bndigital/app
-    version: 1.1.4
-    labels:
-      component: website
+    version: {{ .Values.chartVersion }}
     values:
       - fullnameOverride: {{ .Values.appName }}-website
         replicaCount: {{ .Values.replicaCount }}
@@ -30,16 +28,3 @@ releases:
               - pathTemplate: strapi
                 service:
                   name: {{ .Values.appName }}-cms-app
-
-  - name: app-cms
-    namespace: {{ .Environment.Name }}
-    chart: bndigital/app
-    installed: {{ index .Values "ingressBackendEnabled" | default "true" }}
-    version: 1.1.4
-    labels:
-      component: cms
-    values:
-      - fullnameOverride: {{ .Values.appName }}-cms
-        image: {{ .Values.imageRegistry }}/{{ .Values.appName }}/cms:{{ .Values.imageTag }}
-        serviceAccount:
-          name: '{{ .Values.serviceAccountName }}'
