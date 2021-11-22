@@ -1,5 +1,5 @@
 bases:
-  - environments.values.yaml
+  - environment.values.yaml
   
 repositories:
   - name: bndigital
