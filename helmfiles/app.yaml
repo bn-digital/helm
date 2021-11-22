@@ -1,6 +1,6 @@
 bases:
   - environment.values.yaml
-  
+--- 
 repositories:
   - name: bndigital
     url: https://dcr.bndigital.dev/chartrepo/library
