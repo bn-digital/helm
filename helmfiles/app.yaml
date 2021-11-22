@@ -18,13 +18,13 @@ releases:
       component: website
     values:
       - fullnameOverride: '{{ .Values.appName }}-website'
-        image: '{{ .Values.imageRegistry }}/{{ .Values.appName }}/website:{{ env "GITHUB_SHA" | default "latest" }}'
+        image: 'dcr.bndigital.dev/{{ .Values.appName }}/website:{{ env "GITHUB_SHA" | default "latest" }}'
         serviceAccount:
           name: '{{ .Values.serviceAccountName }}'
         ingress:
           host: '{{ .Values.appName }}.{{ .Values.ingressDomain }}'
           proxy:
-            enabled: {{ .Values.ingressBackendEnabled }}
+            enabled: {{ index .Values "ingressBackendEnabled" | default "true" }}
             paths:
               - pathTemplate: strapi
                 service:
@@ -33,12 +33,12 @@ releases:
   - name: app-cms
     namespace: '{{ .Environment.Name }}'
     chart: bndigital/app
-    installed: {{ .Values.ingressBackendEnabled }}
+    installed: {{ index .Values "ingressBackendEnabled" | default "true" }}
     version: 1.1.4
     labels:
       component: cms
     values:
       - fullnameOverride: '{{ .Values.appName }}-cms'
-        image: '{{ .Values.imageRegistry }}/{{ .Values.appName }}/cms:{{ env "GITHUB_SHA" | default "latest" }}'
+        image: 'dcr.bndigital.dev/{{ .Values.appName }}/cms:{{ env "GITHUB_SHA" | default "latest" }}'
         serviceAccount:
           name: '{{ .Values.serviceAccountName }}'
