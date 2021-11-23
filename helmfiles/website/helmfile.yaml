@@ -26,7 +26,7 @@ releases:
           name: {{ .Values.serviceAccount.name }}
         healthcheck:
           host: {{ .Values.app.name }}.{{ .Values.ingress.domain }}
-          port: {{ .Values.healthcheck.path }}
+          port: {{ .Values.healthcheck.port }}
           path: {{ .Values.healthcheck.path }}
         ingress:
           host: {{ .Values.app.name }}.{{ .Values.ingress.domain }}
