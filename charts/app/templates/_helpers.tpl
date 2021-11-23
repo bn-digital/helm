@@ -1,5 +1,5 @@
 {{- define "app.name" -}}
-{{- default .Values.app.component .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{- define "app.fullname" -}}

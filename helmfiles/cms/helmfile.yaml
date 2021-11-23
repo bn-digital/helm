@@ -17,13 +17,13 @@ releases:
     labels:
       component: cms
     values:
-      - fullnameOverride: '{{ .Values.app.name }}-{{ .Values.app.instance }}'
+      - fullnameOverride: {{ .Values.app.name }}-{{ .Values.app.instance }}
         app:
-          name: '{{ .Values.app.name }}'
-          instance: '{{ .Values.app.instance }}'
+          name: {{ .Values.app.name }}
+          instance: {{ .Values.app.instance }}
         replicaCount: {{ .Values.replicaCount }}
         imageRegistry:
-          url: '{{ .Values.imageRegistry.url }}'
+          url: {{ .Values.imageRegistry.url }}
         healthcheck:
           host: {{ .Values.app.name }}.{{ .Values.ingress.domain }}
           port: {{ .Values.healthcheck.port }}
