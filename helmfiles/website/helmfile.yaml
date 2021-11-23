@@ -15,7 +15,7 @@ releases:
     chart: {{ .Values.chart.name }}
     version: {{ .Values.chart.version }}
     values:
-      - fullnameOverride: {{ .Values.app.name }}-{{ .Values.app.instance }}
+      - fullnameOverride: '{{ .Values.app.name }}-{{ .Values.app.instance }}'
         app:
           name: {{ .Values.app.name }}
           instance: {{ .Values.app.instance }}
