@@ -11,22 +11,15 @@ helmDefaults:
 
 releases:
   - name: app-cms
-    namespace: {{ .Values.environment }}
-    chart: {{ .Values.chart.name }}
-    version: {{ .Values.chart.version }}
+    namespace: '{{ .Values.environment }}'
+    chart: '{{ .Values.chart.name }}'
+    version: '{{ .Values.chart.version }}'
     labels:
       component: cms
     values:
-      - fullnameOverride: {{ .Values.app.name }}-{{ .Values.app.instance }}
-        app:
-          name: {{ .Values.app.name }}
-          instance: {{ .Values.app.instance }}
-        replicaCount: {{ .Values.replicaCount }}
-        imageRegistry:
-          url: {{ .Values.imageRegistry.url }}
-        healthcheck:
-          host: {{ .Values.app.name }}.{{ .Values.ingress.domain }}
-          port: {{ .Values.healthcheck.port }}
-          path: {{ .Values.healthcheck.path }}
+      - fullnameOverride: '{{ .Values.app.name }}-{{ .Values.app.instance }}'
+        image:
+          repository: '{{ .Values.imageRepository }}'
+          tag: '{{ .Values.imageTag }}'
         serviceAccount:
           name: '{{ .Values.serviceAccount.name }}'

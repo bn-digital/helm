@@ -11,27 +11,19 @@ helmDefaults:
 
 releases:
   - name: app-website
-    namespace: {{ .Values.environment }}
-    chart: {{ .Values.chart.name }}
-    version: {{ .Values.chart.version }}
+    namespace: '{{ .Values.environment }}'
+    chart: '{{ .Values.chart.name }}'
+    version: '{{ .Values.chart.version }}'
     values:
       - fullnameOverride: '{{ .Values.app.name }}-{{ .Values.app.instance }}'
-        app:
-          name: {{ .Values.app.name }}
-          instance: {{ .Values.app.instance }}
-        imageRegistry:
-          url: {{ .Values.imageRegistry.url }}
-        replicaCount: {{ .Values.replicaCount }}
+        image:
+          repository: '{{ .Values.imageRepository }}'
+          tag: '{{ .Values.imageTag }}'
         serviceAccount:
-          name: {{ .Values.serviceAccount.name }}
-        healthcheck:
-          host: {{ .Values.app.name }}.{{ .Values.ingress.domain }}
-          port: {{ .Values.healthcheck.port }}
-          path: {{ .Values.healthcheck.path }}
+          name: '{{ .Values.serviceAccount.name }}'
         ingress:
-          host: {{ .Values.app.name }}.{{ .Values.ingress.domain }}
+          host: '{{ .Values.app.name }}.{{ .Values.ingress.domain }}'
           proxy:
-            enabled: {{ index .Values "ingress.proxy.enabled" | default "true" }}
             paths:
               - implementation: strapi
                 service:

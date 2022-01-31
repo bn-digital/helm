@@ -7,16 +7,16 @@ metadata:
 spec:
   replicas: {{ .Values.replicaCount }}
   strategy:
-    type: RollingUpdate
+    type: {{ .Values.deploymentStrategy }}
     rollingUpdate:
       maxUnavailable: 0
   selector:
     matchLabels: {{ include "app.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      annotations: {{ include "app.podAnnotations" . | nindent 8 }}
+      annotations: {{ include "app.podAnnotations" . | indent 8 }}
       labels: {{ include "app.selectorLabels" . | nindent 8 }}
-    spec: {{ with $imagePullSecrets := .Values.imagePullSecrets }}
+    spec: {{ with $imagePullSecrets := .Values.image.pullSecrets }}
       imagePullSecrets: {{ range $imagePullSecrets }}
         - name: {{ tpl . $ }} {{ end }} {{ end }} {{ with $volumes := .Values.volumes }}
       volumes: {{ range  $volumes }}
@@ -32,9 +32,9 @@ spec:
       serviceAccountName: {{ if .name }} {{ .name }} {{ else }} {{ $fullname }} {{ end }} {{ else }} {{ .name }} {{ end }} {{ end }} {{ with .Values.initContainers }}
       initContainers: {{ toYaml . | nindent 6 }} {{ end }}
       containers:
-        - name: {{ .Values.app.component }}
-          image: {{ default .Values.image (printf "%s/%s/%s:%s" .Values.imageRegistry.url .Values.app.name .Values.app.instance .Values.app.version) | quote }}
-          imagePullPolicy: {{ .Values.imagePullPolicy }} {{ with .Values.app.workingDir }}
+        - name: {{ .Values.app.instance }}
+          image: {{ printf "%s/%s:%s" .Values.image.registry.url .Values.image.repository .Values.image.tag | quote }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }} {{ with .Values.app.workingDir }}
           workingDir: {{ . }} {{ end }} {{ with $command := .Values.app.command }}
           command: {{ range $command }}
             - {{ . | quote }}{{ end }} {{ end }} {{ with $args := .Values.app.args  }}
@@ -61,15 +61,17 @@ spec:
           ports:
             - containerPort: {{ .Values.service.containerPort }} {{ if .Values.livenessProbe.enabled }}
           livenessProbe:
+            initialDelaySeconds: 15
+            periodSeconds: 5
             httpGet:
-              scheme: {{ if .Values.healthcheck.host }}{{ "https" | upper }}{{ else }}{{ "http" | upper }} {{ end }}
-              host: {{ .Values.healthcheck.host | default "127.0.0.1" }}
-              port: {{ .Values.healthcheck.port }}
+              scheme: {{ if and .Values.ingress.tls.enabled .Values.ingress.host }} {{ "https" | upper }} {{ else }} {{ "http" | upper }} {{ end }}
+              host:  {{ if .Values.ingress.host }} {{ .Values.ingress.host | quote }} {{ else }} {{ .Values.healthcheck.host | quote }} {{ end }}
+              port: {{ if .Values.ingress.host }} {{ if .Values.ingress.tls.enabled  }} 443 {{ else }} 80 {{ end }} {{ else }} {{ .Values.service.containerPort }} {{ end }}
               path: {{ .Values.healthcheck.path }} {{ if .Values.readinessProbe.enabled }}
           readinessProbe:
-            initialDelaySeconds: {{ if .Release.IsInstall }}180{{ else }}15{{ end }}
-            httpGet:
-              scheme: {{ if and .Values.ingress.tls.enabled .Values.ingress.host }}{{ "https" | upper }}{{ else }}{{ "http" | upper }} {{ end }}
-              host: {{ .Values.healthcheck.host }}
-              port: {{ .Values.healthcheck.port }}
-              path: {{ .Values.healthcheck.path }} {{ end }} {{ end }}
+            initialDelaySeconds: 15
+            tcpSocket:
+              port: {{ .Values.service.containerPort }}
+              host: {{ .Values.healthcheck.host | quote }} {{ end }} {{ end }}
+
+

@@ -29,10 +29,22 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
 {{- define "app.podAnnotations" -}}
+{{- if .Values.vcs.repository }}
+{{ .Values.vcs.url }}/repository: {{ .Values.vcs.repository | quote }}
+{{- end }}
+{{- if .Values.vcs.commit }}
+{{ .Values.vcs.url }}/commit: {{ .Values.vcs.commit | quote }}
+{{- end }}
+{{- if .Values.vcs.ref }}
+{{ .Values.vcs.url }}/ref: {{ .Values.vcs.ref | quote }}
+{{- end }}
+{{- if .Values.podAnnotations }}
 {{ toYaml .Values.podAnnotations }}
+{{- end }}
 {{- end }}
 
 {{- define "app.selectorLabels" -}}
 app.kubernetes.io/name: {{ .Values.app.name }}
-app.kubernetes.io/instance: {{ .Values.app.instance }}
+app.kubernetes.io/component: {{ default .Values.app.component .Values.image.repository | quote }}
+app.kubernetes.io/environment: {{ .Values.app.environment | quote }}
 {{- end }}

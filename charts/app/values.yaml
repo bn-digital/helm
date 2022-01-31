@@ -5,17 +5,25 @@ nameOverride: ''
 fullnameOverride: ''
 
 replicaCount: 1
+deploymentStrategy: RollingUpdate
 
-image: ''
-imagePullPolicy: Always
-imagePullSecrets: [ ]
-imageRegistry:
-  url: dcr.bndigital.dev
-#  username: ''
-#  password: ''
+image:
+  registry:
+    url: dcr.bndigital.dev/library
+    username: ''
+    password: ''
+  repository: 'nodejs'
+  tag: 1.4.0
+  pullPolicy: Always
+  pullSecrets: [ ]
 
-podAnnotations:
-  app.kubernetes.io/environment: production
+vcs:
+  url: 'github.com'
+  repository: ''
+  ref: 'latest'
+  commit: ''
+
+podAnnotations: {}
 
 podSecurityContext:
   runAsUser: 1000
@@ -54,9 +62,10 @@ configMaps: [ ]
 
 app:
   name: app
-  instance: website
-  version: latest
-  component: nodejs
+  component: website
+  instance: nodejs
+  environment: staging
+
 #  command: [ ]
 #  args: [ ]
   workingDir: ''
@@ -64,8 +73,21 @@ app:
   env: { }
 #    NODE_ENV: production
 
+database:
+  enabled: false
+  backup:
+    enabled: false
+    image: 'schickling/postgres-backup-s3:latest'
+    schema: 'public'
+    schedule: '@daily'
+
 ingress:
   secretName: ''
+  host: ''
+  extraHosts: [ ]
+  # - '*.test.local'
+  path: /
+  pathType: Prefix
   className: nginx
   annotations:
     { }
@@ -76,16 +98,11 @@ ingress:
       name: letsencrypt
       email: email@test.com
       server: https://acme-v02.api.letsencrypt.org/directory
-  host: ''
-  extraHosts: []
-#    - '*.test.local'
-  path: /
-  pathType: Prefix
   uploadSize: 5m
   proxy:
     regex: true
     www: true
-    paths: []
+    paths:
 #      - path: '/graphql'
 #        implementation: '' # see possible keys in ingress.proxy.templates
 #        pathType: Prefix
@@ -94,7 +111,7 @@ ingress:
 #          port: 80
     templates:
       strapi:
-        path: /(admin|auth|import-export-content|callback|connect|content-manager|content-type-builder|graphql|email|email-designer|entity-relationship-chart|i18n|register|preview-content|responsive-image|sitemap|users-permissions|upload|uploads)(.*)
+        path: /(admin|api|connect|config-sync|comments|content-manager|content-type-builder|graphql|graphs-builder|email|email-designer|entity-relationship-chart|i18n|import-export-content|preview-content|responsive-image|sitemap|users-permissions|upload|uploads)(.*)
         pathType: ImplementationSpecific
       api:
         path: /api
@@ -106,12 +123,12 @@ ingress:
 priorityClassName: ''
 
 healthcheck:
-  host: ''
+  host: '127.0.0.1'
   port: 5000
   path: /
 
 livenessProbe:
-  enabled: true
+  enabled: false
 
 readinessProbe:
   enabled: true

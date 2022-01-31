@@ -11,7 +11,7 @@ metadata:
     nginx.ingress.kubernetes.io/from-to-www-redirect: "true" {{ end }} {{ with .Values.ingress.uploadSize }}
     nginx.ingress.kubernetes.io/proxy-body-size: {{ . | quote }} {{ end }} {{ with .Values.ingress.tls }} {{ if .enabled }}
     kubernetes.io/tls-acme: "true" {{ if .issuer.enabled }}
-    cert-manager.io/issuer: {{ printf "%s-%s" $.Values.app.name .issuer.name }} {{ end }}
+    cert-manager.io/issuer: {{ printf "%s-%s" $.Release.Name .issuer.name }} {{ end }}
     cert-manager.io/common-name: {{ $host }} {{ end }} {{ end }}
 spec:
   ingressClassName: {{ .Values.ingress.className }} {{ with .Values.ingress.tls }} {{ if .enabled }}
