@@ -1,0 +1,7 @@
+remote: origin
+target-branch: latest
+chart-dirs:
+  - charts
+chart-repos:
+  - bndigital=https://charts.bndigital.dev
+helm-extra-args: --timeout 600s
