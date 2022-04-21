@@ -1,2 +1,4 @@
 owner: bn-digital
 git-repo: helm
+packages-with-index: true
+charts_dir: charts
