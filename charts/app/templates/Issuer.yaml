@@ -1,18 +1,19 @@
+{{- $fullName := include "app.fullname" . -}}
 {{- with $issuer := .Values.ingress.tls.issuer }} {{ if .enabled }}
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
-  name: {{ printf "%s-%s" $.Values.app.name .name }}
+  name: {{ printf "%s-%s" $.Release.Name .name }}
   labels: {{ include "app.labels" $ | nindent 4 }}
   annotations:
     helm.sh/hook: post-install,post-upgrade
 spec:
   acme:
-    email: {{ printf .email }}
+    email: {{ printf "%s@%s" "admin" $.Values.ingress.host }}
     server: {{ .server }}
     privateKeySecretRef:
       name: {{ .name }}
     solvers:
       - http01:
           ingress:
-            class: {{ $.Values.ingress.className }} {{ end }} {{ end }}
+            name: {{ $fullName }} {{ end }} {{ end }}

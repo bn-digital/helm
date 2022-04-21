@@ -81,6 +81,25 @@ database:
     schema: 'public'
     schedule: '@daily'
 
+metabase:
+  enabled: false
+  database:
+    type: postgres
+    host: postgresql
+    port: 5432
+    dbname: metabase
+    username: postgres
+    password: ''
+  ingress:
+    enabled: false
+    hosts: [  ]
+    #    tls:
+#      - hosts: [ ]
+#        secretName: ''
+    annotations:
+      kubernetes.io/ingress-class: nginx
+      kubernetes.io/tls-acme: 'true'
+
 ingress:
   secretName: ''
   host: ''
@@ -96,12 +115,11 @@ ingress:
     issuer:
       enabled: false
       name: letsencrypt
-      email: email@test.com
       server: https://acme-v02.api.letsencrypt.org/directory
   uploadSize: 5m
   proxy:
     regex: true
-    www: true
+    www: false
     paths:
 #      - path: '/graphql'
 #        implementation: '' # see possible keys in ingress.proxy.templates

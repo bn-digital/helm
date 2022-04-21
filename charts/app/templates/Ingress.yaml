@@ -17,8 +17,8 @@ spec:
   ingressClassName: {{ .Values.ingress.className }} {{ with .Values.ingress.tls }} {{ if .enabled }}
   tls:
     - hosts:
-        - {{ $host | quote }}
-        - {{ printf "%s.%s" "www" $host | quote }} {{ range $.Values.ingress.extraHosts }}
+        - {{ $host | quote }} {{ if $.Values.ingress.proxy.www }}
+        - {{ printf "%s.%s" "www" $host | quote }} {{ end }} {{ range $.Values.ingress.extraHosts }}
         - {{  . | quote }} {{ end }}
       secretName: {{ $.Values.ingress.secretName | default $host | quote }} {{ end }} {{ end }}
   rules:
