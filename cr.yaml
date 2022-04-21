@@ -1,2 +1,3 @@
 owner: bn-digital
 git-repo: helm
+package-path: .deploy
