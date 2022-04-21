@@ -1,0 +1,53 @@
+apiVersion: v1
+entries:
+  imaginary:
+  - apiVersion: v2
+    appVersion: 1.2.4
+    created: "2022-04-21T15:28:29.6494879+03:00"
+    description: A Helm chart for Imaginary - fast, simple, scalable HTTP microservice
+      for high-level image processing
+    digest: 64e38c4708371add61386d9caa3e1231261c5972018feaa1ba2d58f36ff54a4c
+    home: https://github.com/bn-digital/helm
+    icon: https://images.opencollective.com/imaginary/10e85d1/logo/256.png
+    maintainers:
+    - email: dev@bndigital.co
+      name: BN Enginseers
+      url: https://github.com/bn-digital
+    name: imaginary
+    sources:
+    - https://github.com/bn-digital/helm/tree/latest/charts/imaginary
+    type: application
+    urls:
+    - https://github.com/bn-digital/helm/releases/download/imaginary-1.0.0/imaginary-1.0.0.tgz
+    version: 1.0.0
+  openvpn:
+  - apiVersion: v2
+    appVersion: 2.5.2
+    created: "2022-04-21T15:28:29.8438394+03:00"
+    description: A Helm chart to install an openvpn server inside a kubernetes cluster.  Certificate
+      generation is also part of the deployment, and this chart will generate client
+      keys as needed.
+    digest: 4fb0372e49426e21d025a8bca67a1e534ae0af3ac9b2572af280b1a6a596ad37
+    home: https://openvpn.net/index.php/open-source.html
+    icon: https://cdn.worldvectorlogo.com/logos/openvpn-2.svg
+    keywords:
+    - openvpn
+    - vpn
+    - tunnel
+    - network
+    - service
+    - connectivity
+    - encryption
+    maintainers:
+    - email: dev@bndigital.co
+      name: BN Enginseers
+      url: https://github.com/bn-digital
+    name: openvpn
+    sources:
+    - https://github.com/bn-digital/docker/tree/latest/images/openvpn
+    - https://github.com/bn-digital/helm/tree/latest/charts/openvpn
+    type: application
+    urls:
+    - https://github.com/bn-digital/helm/releases/download/openvpn-1.0.2/openvpn-1.0.2.tgz
+    version: 1.0.2
+generated: "2022-04-21T15:28:29.8438394+03:00"
