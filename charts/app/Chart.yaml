@@ -14,7 +14,7 @@ keywords:
 dependencies:
   - name: postgresql
     repository: https://charts.bitnami.com/bitnami
-    version: 11.1.22
+    version: 11.1.29
     condition: database.enabled
     alias: database
   - name: metabase
