@@ -6,42 +6,69 @@ repositories:
 
 helmDefaults:
   historyMax: 3
-  cleanupOnFail: true
   createNamespace: true
+  cleanupOnFail: true
+
+environments:
+  default:
+    values:
+      - ingressController:
+          enabled: false
+        tlsIssuer:
+          enabled: false
+  staging:
+    values:
+      - ingressController:
+          enabled: false
+        tlsIssuer:
+          enabled: false
+  production:
+    values:
+      - ingressController:
+          enabled: true
+        tlsIssuer:
+          enabled: true
 
 releases:
   - name: ingress-nginx
+    namespace: infrastructure
+    condition: 'ingressController.enabled'
     chart: ingress-nginx/ingress-nginx
-    namespace: kube-system
-    version: 4.0.1
+    version: 4.1.0
     labels:
-      component: load-balancer
-      cloud: digitalocean
+      component: infrastructure
     values:
       - defaultBackend:
           enabled: false
         controller:
           priorityClassName: system-cluster-critical
+          ingressClassResource:
+            default: true
           config:
+            allow-snippet-annotations: 'true'
+            enable-modsecurity: 'true'
+            use-gzip: 'true'
             use-http2: 'true'
           service:
             omitClusterIP: true
             annotations:
-              service.beta.kubernetes.io/do-loadbalancer-healthcheck-protocol: 'tcp'
-              service.beta.kubernetes.io/do-loadbalancer-http2-ports: '443'
+              service.beta.kubernetes.io/do-loadbalancer-name: '{{ requiredEnv "APP_NAME" }}'
               service.beta.kubernetes.io/do-loadbalancer-protocol: 'http2'
+              service.beta.kubernetes.io/do-loadbalancer-http2-port: '443'
               service.beta.kubernetes.io/do-loadbalancer-redirect-http-to-https: 'true'
               service.beta.kubernetes.io/do-loadbalancer-tls-passthrough: 'true'
 
   - name: cert-manager
+    namespace: infrastructure
     chart: jetstack/cert-manager
-    namespace: cert-manager
-    version: v1.5.3
+    condition: 'tlsIssuer.enabled'
+    version: v1.8.0
     labels:
-      component: load-balancer
+      component: infrastructure
     values:
       - installCRDs: true
+        metrics:
+          prometheus:
+            enabled: false
         global:
           priorityClassName: system-cluster-critical
-        prometheus:
-          enabled: false
