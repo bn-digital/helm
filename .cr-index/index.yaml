@@ -1,5 +1,34 @@
 apiVersion: v1
 entries:
+  app:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2022-05-30T22:33:21.775557+03:00"
+    dependencies:
+    - alias: database
+      condition: database.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 11.5.1
+    - alias: metabase
+      condition: metabase.enabled
+      name: metabase
+      repository: https://pmint93.github.io/helm-charts
+      version: 2.1.2
+    description: Web application Helm Chart
+    digest: 016fb7af43993d2c392c7a6de41685479d9a7261a97ade9244bc6b2dc287f250
+    icon: https://icon-library.com/images/react-icon/react-icon-29.jpg
+    keywords:
+    - http
+    - frontend
+    - backend
+    - website
+    - cms
+    name: app
+    type: application
+    urls:
+    - https://github.com/bn-digital/helm/releases/download/app-2.0.0/app-2.0.0.tgz
+    version: 2.0.0
   imaginary:
   - apiVersion: v2
     appVersion: 1.2.4
@@ -50,4 +79,4 @@ entries:
     urls:
     - https://github.com/bn-digital/helm/releases/download/openvpn-1.0.2/openvpn-1.0.2.tgz
     version: 1.0.2
-generated: "2022-04-21T15:28:29.8438394+03:00"
+generated: "2022-05-30T22:33:22.1346847+03:00"
