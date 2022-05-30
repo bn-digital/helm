@@ -13,6 +13,7 @@ spec:
     server: {{ .server }}
     privateKeySecretRef:
       name: {{ .name }}
+    enableDurationFeature: true
     solvers:
       - http01:
           ingress:

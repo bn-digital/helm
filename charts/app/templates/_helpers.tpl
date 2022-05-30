@@ -2,6 +2,14 @@
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
+{{- define "app.registry" -}}
+{{- printf "%s-%s" .Release.Name "registry" }}
+{{- end }}
+
+{{- define "app.s3" -}}
+{{- printf "%s-%s" .Release.Name "s3" }}
+{{- end }}
+
 {{- define "app.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
@@ -41,6 +49,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- if .Values.podAnnotations }}
 {{ toYaml .Values.podAnnotations }}
 {{- end }}
+checksum/config: {{ include (print .Template.BasePath "/Secret.yaml") . | sha256sum }}
 {{- end }}
 
 {{- define "app.selectorLabels" -}}

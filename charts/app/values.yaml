@@ -9,12 +9,12 @@ deploymentStrategy: RollingUpdate
 
 image:
   registry:
-    url: dcr.bndigital.dev/library
+    url: dcr.bndigital.dev/app
     username: ''
     password: ''
   repository: 'nodejs'
-  tag: 1.4.0
-  pullPolicy: Always
+  tag: latest
+  pullPolicy: IfNotPresent
   pullSecrets: [ ]
 
 vcs:
@@ -51,7 +51,7 @@ service:
   containerPort: 5000
 
 serviceAccount:
-  create: false
+  create: true
   name: ''
 
 # -- Names of existing external secrets to use. Optionals for safety
@@ -80,6 +80,15 @@ database:
     image: 'schickling/postgres-backup-s3:latest'
     schema: 'public'
     schedule: '@daily'
+
+s3:
+  enabled: false
+  region: 'fra1'
+  accessKeyId: ''
+  secretAccessKey: ''
+  bucket: 'bn-dev'
+  path: 'backups/app'
+  endpoint: 'https://fra1.digitaloceanspaces.com'
 
 metabase:
   enabled: false

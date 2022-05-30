@@ -1,4 +1,5 @@
 {{ $fullname := include "app.fullname" . }}
+{{ $registry := .Values.image.registry }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -16,9 +17,11 @@ spec:
     metadata:
       annotations: {{ include "app.podAnnotations" . | indent 8 }}
       labels: {{ include "app.selectorLabels" . | nindent 8 }}
-    spec: {{ with $imagePullSecrets := .Values.image.pullSecrets }}
+    spec: {{ if and $registry.url $registry.username $registry.password }}
+      imagePullSecrets:
+        - name: {{ include "app.registry" . }} {{ else }} {{ with $imagePullSecrets := .Values.image.pullSecrets }}
       imagePullSecrets: {{ range $imagePullSecrets }}
-        - name: {{ tpl . $ }} {{ end }} {{ end }} {{ with $volumes := .Values.volumes }}
+        - name: {{ tpl . $ }} {{ end }} {{ end }}  {{ end }} {{ with $volumes := .Values.volumes }}
       volumes: {{ range  $volumes }}
         - name: {{ .name }} {{ if .persistence.enabled }}
           persistentVolumeClaim:
@@ -29,12 +32,12 @@ spec:
       affinity: {{ toYaml . | nindent 8 }} {{ end }} {{ with .Values.tolerations }}
       tolerations: {{ toYaml . | nindent 8 }} {{ end }} {{ with .Values.priorityClassName }}
       priorityClassName: {{ . }} {{ end }} {{ with .Values.serviceAccount }} {{ if or .create .name }}
-      serviceAccountName: {{ if .name }} {{ .name }} {{ else }} {{ $fullname }} {{ end }} {{ else }} {{ .name }} {{ end }} {{ end }} {{ with .Values.initContainers }}
+      serviceAccountName: {{ if .name }} {{ .name }} {{ else }} {{ $fullname }} {{ end }} {{ end }} {{ end }} {{ with .Values.initContainers }}
       initContainers: {{ toYaml . | nindent 6 }} {{ end }}
       containers:
         - name: {{ .Values.app.instance }}
           image: {{ printf "%s/%s:%s" .Values.image.registry.url .Values.image.repository .Values.image.tag | quote }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }} {{ with .Values.app.workingDir }}
+          imagePullPolicy: {{ if eq .Values.image.pullPolicy "latest" }} Always {{ else }} {{ .Values.image.pullPolicy }} {{ end }} {{ with .Values.app.workingDir }}
           workingDir: {{ . }} {{ end }} {{ with $command := .Values.app.command }}
           command: {{ range $command }}
             - {{ . | quote }}{{ end }} {{ end }} {{ with $args := .Values.app.args  }}
@@ -45,6 +48,10 @@ spec:
             - mountPath: {{ printf "%s/%s" $.Values.app.workingDir .path }}
               name: {{ .name }} {{ end }} {{ end }}
           env:
+            - name: NODE_ENV
+              value: "production"
+            - name: HOST
+              value: "0.0.0.0"
             - name: PORT
               value: {{ .Values.service.containerPort | quote }} {{ if or .Values.app.env .Values.configMaps .Values.secrets }}
           envFrom: {{ with $secrets := .Values.secrets }} {{ range $secrets }}
