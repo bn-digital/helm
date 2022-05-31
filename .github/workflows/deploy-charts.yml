@@ -17,19 +17,18 @@ on:
 
 env:
   APP_NAME: ${{ github.event.repository.name }}
-  GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+  APP_ENV: ${{ inputs.environment }}
+  APP_VERSION: ${{ inputs.version }}
   DOMAIN: ${{ github.event.repository.name }}.bndigital.dev
+  GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
   VAULT_ENDPOINT: ${{ secrets.VAULT_ENDPOINT }}
-
+  
 jobs:
   helm:
     runs-on: self-hosted
     environment:
-      name: staging
-      url: ${{ env.DOMAIN }}
-    env:
-      APP_ENV: ${{ inputs.environment }}
-      APP_VERSION: ${{ inputs.version }}
+      name: ${{ inputs.environment }}
+      url: ${{ env.DOMAIN }} 
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
