@@ -43,7 +43,7 @@ releases:
             username: '{{ requiredEnv "DOCKER_USERNAME" }}'
             password: '{{ requiredEnv "DOCKER_PASSWORD" }}'
           repository: 'website'
-          tag: '{{ env "APP_VERSION" | default "latest" }}'
+          tag: '{{ requiredEnv "APP_VERSION" }}'
           pullSecrets: ['{{ requiredEnv "APP_NAME" }}-website-registry']
         vcs:
           repository: '{{ requiredEnv "GITHUB_REPOSITORY" }}'
@@ -75,7 +75,7 @@ releases:
           registry:
             url: '{{ env "DOCKER_REGISTRY" | default "dcr.bndigital.dev" }}/{{ requiredEnv "APP_NAME" }}'
           repository: 'cms'
-          tag: '{{ env "APP_VERSION" | default "latest" }}'
+          tag: '{{ requiredEnv "APP_VERSION" }}'
           pullSecrets: ['{{ requiredEnv "APP_NAME" }}-website-registry']
         vcs:
           repository: '{{ requiredEnv "GITHUB_REPOSITORY" }}'
