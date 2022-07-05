@@ -18,10 +18,9 @@ helmfiles:
       app:
         name: '{{ requiredEnv "APP_NAME" }}'
         component: cms
-        domain: '{{ requiredEnv "DOMAIN" }}'
       database:
-        username: '{{ requiredEnv "DATABASE_USERNAME" }}'
-        password: '{{ requiredEnv "DATABASE_PASSWORD" }}'
+        username: '{{ env "DATABASE_USERNAME" | default "cms" }}'
+        password: '{{ env "DATABASE_PASSWORD" | default "password" }}'
       image:
         registry: '{{ requiredEnv "DOCKER_REGISTRY" }}/{{ requiredEnv "APP_NAME" }}'
         
