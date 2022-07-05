@@ -128,6 +128,7 @@ ingress:
   uploadSize: 5m
   proxy:
     regex: true
+    rewrite: true
     www: false
     paths:
 #      - path: '/graphql'
@@ -138,13 +139,16 @@ ingress:
 #          port: 80
     templates:
       strapi:
-        path: /(admin|api|connect|config-sync|comments|content-manager|content-type-builder|graphql|graphs-builder|email|email-designer|entity-relationship-chart|i18n|import-export-content|import-export-entities|notes|preview-content|responsive-image|seo|sitemap|users-permissions|upload|uploads)(.*)
+        path: /cms(/|$)(.*)
+        rewrite: true
         pathType: ImplementationSpecific
       api:
         path: /api
+        rewrite: false
         pathType: Prefix
       graphql:
         path: /graphql
+        rewrite: false
         pathType: Exact
 
 priorityClassName: ''

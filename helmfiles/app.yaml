@@ -1,11 +1,11 @@
-repositories:
-  - name: bndigital
-    url: https://bn-digital.github.io/helm
-
 helmDefaults:
   historyMax: 3
   createNamespace: true
   cleanupOnFail: true
+
+repositories:
+  - name: bndigital
+    url: https://bn-digital.github.io/helm
 
 environments:
   default:
@@ -14,35 +14,47 @@ environments:
           enabled: false
         tlsIssuer:
           enabled: false
+        website:
+          name: website
+        cms:
+          name: cms
   staging:
     values:
       - database:
           enabled: false
         tlsIssuer:
           enabled: true
+        website:
+          name: website
+        cms:
+          name: cms
   production:
     values:
       - database:
           enabled: true
         tlsIssuer:
           enabled: true
+        website:
+          name: website
+        cms:
+          name: cms
 
 releases:
-  - name: '{{ requiredEnv "APP_NAME" }}-website'
+  - name: '{{ requiredEnv "APP_NAME" }}-{{ .Values.website.name }}'
     namespace: '{{ env "APP_ENV" | default "default" }}'
     chart: bndigital/app
-    version: 2.0.0
+    version: 2.0.1
     labels:
-      component: website
+      component: '{{ .Values.website.name }}'
     values:
       - image:
           registry:
             url: '{{ requiredEnv "DOCKER_REGISTRY" }}/{{ requiredEnv "APP_NAME" }}'
             username: '{{ requiredEnv "DOCKER_USERNAME" }}'
             password: '{{ requiredEnv "DOCKER_PASSWORD" }}'
-          repository: 'website'
+          repository: '{{ .Values.website.name }}'
           tag: '{{ env "APP_VERSION" | default "latest" }}'
-          pullSecrets: ['{{ requiredEnv "APP_NAME" }}-website-registry']
+          pullSecrets: ['{{ requiredEnv "APP_NAME" }}-{{ .Values.website.name }}-registry']
         vcs:
           repository: '{{ env "GITHUB_REPOSITORY" | default "unknown" }}'
           ref: '{{ env "GITHUB_REF_NAME" | default "latest" }}'
@@ -57,21 +69,21 @@ releases:
             paths:
               - implementation: 'strapi'
                 service:
-                  name: '{{ requiredEnv "APP_NAME" }}-cms-app'
+                  name: '{{ requiredEnv "APP_NAME" }}-{{ .Values.cms.name }}-app'
 
-  - name: '{{ requiredEnv "APP_NAME" }}-cms'
+  - name: '{{ requiredEnv "APP_NAME" }}-{{ .Values.cms.name }}'
     namespace: '{{ env "APP_ENV" | default "default" }}'
     chart: bndigital/app
-    version: 2.0.0
+    version: 2.0.1
     labels:
-      component: cms
+      component: '{{ .Values.cms.name }}'
     values:
       - image:
           registry:
             url: '{{ env "DOCKER_REGISTRY" | default "dcr.bndigital.dev" }}/{{ requiredEnv "APP_NAME" }}'
-          repository: 'cms'
-          tag: '{{ requiredEnv "APP_VERSION" }}'
-          pullSecrets: ['{{ requiredEnv "APP_NAME" }}-website-registry']
+          repository: '{{ .Values.cms.name }}'
+          tag: '{{ env "APP_VERSION" | default "latest" }}'
+          pullSecrets: ['{{ requiredEnv "APP_NAME" }}-{{ .Values.website.name }}-registry']
         vcs:
           repository: '{{ env "GITHUB_REPOSITORY" | default "unknown" }}'
           ref: '{{ env "GITHUB_REF_NAME" | default "latest" }}'

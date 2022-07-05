@@ -5,7 +5,7 @@ Charts used by [bndigital.co](https://bndigital.co) to launch NodeJS-fullstack a
 Add repository
 
 ```shell
-helm repo add bndigital https://dcr.bndigital.dev/chartrepo/library
+helm repo add bndigital https://bn-digital.github.io/helm
 helm install my-release bndigital/<chart>
 ```
 

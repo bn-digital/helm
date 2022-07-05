@@ -1,0 +1,52 @@
+helmDefaults:
+  historyMax: 3
+  createNamespace: true
+  cleanupOnFail: true
+
+repositories:
+  - name: metabase
+    url: https://pmint93.github.io/helm-charts
+
+environments:
+  default:
+    values:
+      - app:
+          name: metabase
+
+  staging:
+    values:
+      - app:
+          name: metabase
+
+  production:
+    values:
+      - app:
+          name: metabase
+
+releases:
+  - name: '{{ requiredEnv "APP_NAME" }}-{{ .Values.app.name }}'
+    namespace: '{{ requiredEnv "APP_ENV" }}'
+    chart: metabase/metabase
+    installed: true
+    version: 2.1.4
+    labels:
+      component: '{{ .Values.app.name }}'
+    values:
+      - database:
+          type: postgres
+          host: '{{ requiredEnv "DATABASE_HOST" }}'
+          port: 5432
+          dbname: '{{ requiredEnv "APP_NAME" }}-metabase'
+          username: '{{ requiredEnv "DATABASE_USERNAME" }}'
+          password: '{{ requiredEnv "DATABASE_USERNAME" }}'
+        ingress:
+          enabled: true
+          className: nginx
+          hosts: ['{{ .Values.app.name }}.{{ requiredEnv "DOMAIN" }}']
+          tls:
+            - hosts:
+                - '{{ .Values.app.name }}.{{ requiredEnv "DOMAIN" }}'
+              secretName: '{{ .Values.app.name }}.{{ requiredEnv "DOMAIN" }}'
+          annotations:
+            kubernetes.io/tls-acme: 'true'
+
