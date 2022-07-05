@@ -3,35 +3,35 @@ repositories:
     url: https://bn-digital.github.io/helm
 
 releases:
-  - name: '{{ .Values.app.name }}-{{ .Values.app.component }}'
+  - name: '{{ requiredEnv "APP_NAME" }}-website'
     namespace: '{{ env "APP_ENV" | default "default" }}'
     chart: bndigital/app
     version: 2.0.1
     labels:
-      component: '{{ .Values.app.component }}'
+      component: website
     set:
       - name: app.name
         value: {{ requiredEnv "APP_NAME" }}
       - name: app.component
-        value: website
+        value: 'website'
       - name: image.repository
-        value: website
+        value: 'website'
+      - name: image.tag
+        value: '{{ env "APP_VERSION" | default "latest" }}'
       - name: ingress.host
         value: {{ requiredEnv "DOMAIN" }}
+      - name: image.registry.url
+        value: '{{ requiredEnv "DOCKER_REGISTRY" }}/{{ requiredEnv "APP_NAME" }}'
+      - name: image.registry.username
+        value: '{{ requiredEnv "DOCKER_USERNAME" }}'
+      - name: image.registry.password
+        value: '{{ requiredEnv "DOCKER_PASSWORD" }}'
     values:
-      - image:
-          registry:
-            url: '{{ .Values.imageRegistryUrl }}'
-            username: '{{ requiredEnv "DOCKER_USERNAME" }}'
-            password: '{{ requiredEnv "DOCKER_PASSWORD" }}'
-          repository: '{{ .Values.app.component }}'
-          tag: '{{ env "APP_VERSION" | default "latest" }}'
-        vcs:
+      - vcs:
           repository: '{{ env "GITHUB_REPOSITORY" | default "unknown" }}'
           ref: '{{ env "GITHUB_REF_NAME" | default "latest" }}'
           commit: '{{ env "GITHUB_SHA" | default "unknown" }}'
         ingress:
-          host: '{{ .Values.app.domain }}'
           tls:
             issuer:
               enabled: true
@@ -40,4 +40,4 @@ releases:
             paths:
               - implementation: 'strapi'
                 service:
-                  name: '{{ .Values.app.name }}-cms-app'
+                  name: '{{ .Values.appName }}-cms-app'
