@@ -7,23 +7,23 @@ helmfiles:
   - path: git::https://github.com/bn-digital/helm.git@helmfiles/website.yaml?ref=latest
     values:
       app:
-        name: '{{ requiredName "APP_NAME" }}'
+        name: '{{ requiredEnv "APP_NAME" }}'
         component: website
         domain: '{{ requiredEnv "DOMAIN" }}'
       image:
-        registry: {{ requiredEnv "DOCKER_REGISTRY" }}/{{ requiredEnv "APP_NAME" }}
+        registry: '{{ requiredEnv "DOCKER_REGISTRY" }}/{{ requiredEnv "APP_NAME" }}'
         
   - path: git::https://github.com/bn-digital/helm.git@helmfiles/cms.yaml?ref=latest
     values:
       app:
-        name: '{{ requiredName "APP_NAME" }}'
+        name: '{{ requiredEnv "APP_NAME" }}'
         component: cms
         domain: '{{ requiredEnv "DOMAIN" }}'
       database:
         username: '{{ requiredEnv "DATABASE_USERNAME" }}'
         password: '{{ requiredEnv "DATABASE_PASSWORD" }}'
       image:
-        registry: {{ requiredEnv "DOCKER_REGISTRY" }}/{{ requiredEnv "APP_NAME" }}
+        registry: '{{ requiredEnv "DOCKER_REGISTRY" }}/{{ requiredEnv "APP_NAME" }}'
         
 environments:
   default:
