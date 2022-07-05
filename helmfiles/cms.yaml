@@ -1,0 +1,44 @@
+repositories:
+  - name: bndigital
+    url: https://bn-digital.github.io/helm
+
+releases:
+  - name: '{{ .Values.app.name }}-{{ .Values.app.component }}'
+    namespace: '{{ env "APP_ENV" | default "default" }}'
+    chart: bndigital/app
+    version: 2.0.1
+    labels:
+      component: '{{ .Values.app.component }}'
+    values:
+      - image:
+          registry:
+            url: '{{ .Values.image.registry }}'
+            username: {{ requiredEnv "DOCKER_USERNAME" }}
+            username: {{ requiredEnv "DOCKER_PASSWORD" }}
+          repository: '{{ .Values.app.component }}'
+          tag: '{{ env "APP_VERSION" | default "latest" }}'
+        vcs:
+          repository: '{{ env "GITHUB_REPOSITORY" | default "unknown" }}'
+          ref: '{{ env "GITHUB_REF_NAME" | default "latest" }}'
+          commit: '{{ env "GITHUB_SHA" | default "unknown" }}'
+        database:
+          enabled: {{ .Values.database.enabled }}
+          auth:
+            username: '{{ .Values.database.username }}'
+            password: '{{ .Values.database.password }}'
+            database: '{{ .Values.app.name }}'
+            postgresPassword: '{{ env "DATABASE_ROOT_PASSWORD" | default "P@ssw0rD" }}'
+          primary:
+            priorityClassName: system-node-critical
+            persistence:
+              size: 2Gi
+            resources:
+              requests:
+                cpu: '1.0'
+                memory: '1Gi'
+          serviceAccount:
+            create: true
+          volumePermissions:
+            enabled: true
+        healthcheck:
+          path: /graphql
