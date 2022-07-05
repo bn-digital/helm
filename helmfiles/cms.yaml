@@ -3,44 +3,41 @@ repositories:
     url: https://bn-digital.github.io/helm
 
 releases:
-  - name: '{{ .Values.app.name }}-{{ .Values.app.component }}'
+  - name: '{{ requiredEnv "APP_NAME" }}-cms'
     namespace: '{{ env "APP_ENV" | default "default" }}'
     chart: bndigital/app
     version: 2.0.1
     labels:
-      component: '{{ .Values.app.component }}'
+      component: cms
     set:
       - name: app.name
-        value: {{ requiredEnv "APP_NAME" }}
+        value: '{{ requiredEnv "APP_NAME" }}'
       - name: app.component
-        value: cms
+        value: 'cms'
       - name: image.repository
-        value: cms
+        value: 'cms'
+      - name: image.tag
+        value: '{{ env "APP_VERSION" | default "latest" }}'
       - name: database.username
         value: {{ env "DATABASE_USERNAME" | default "cms" }}
       - name: database.password
         value: {{ env "DATABASE_PASSWORD" | default "password" }}
+      - name: database.name
+        value: {{ requiredEnv "APP_NAME" }}
+      - name: database.enabled
+        value: {{ env "DATABASE_ENABLED" | default "false" }}
     values:
-      - app:
-          name: '{{ .Values.app.name }}'
-          component: '{{ .Values.app.component }}'
-        image:
+      - image:
           registry:
-            url: '{{ .Values.imageRegistryUrl }}'
+            url: '{{ requiredEnv "DOCKER_REGISTRY" }}/{{ requiredEnv "APP_NAME" }}'
             username: {{ requiredEnv "DOCKER_USERNAME" }}
-            username: {{ requiredEnv "DOCKER_PASSWORD" }}
-          repository: '{{ .Values.app.component }}'
-          tag: '{{ env "APP_VERSION" | default "latest" }}'
+            username: {{ requiredEnv "DOCKER_PASSWORD" }} 
         vcs:
           repository: '{{ env "GITHUB_REPOSITORY" | default "unknown" }}'
           ref: '{{ env "GITHUB_REF_NAME" | default "latest" }}'
           commit: '{{ env "GITHUB_SHA" | default "unknown" }}'
         database:
-          enabled: {{ .Values.database.enabled }}
           auth:
-            username: '{{ .Values.database.username }}'
-            password: '{{ .Values.database.password }}'
-            database: '{{ .Values.app.name }}'
             postgresPassword: '{{ env "DATABASE_ROOT_PASSWORD" | default "P@ssw0rD" }}'
           primary:
             priorityClassName: system-node-critical
