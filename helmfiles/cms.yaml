@@ -26,7 +26,7 @@ releases:
           component: '{{ .Values.app.component }}'
         image:
           registry:
-            url: '{{ .Values.image.registry }}'
+            url: '{{ .Values.imageRegistryUrl }}'
             username: {{ requiredEnv "DOCKER_USERNAME" }}
             username: {{ requiredEnv "DOCKER_PASSWORD" }}
           repository: '{{ .Values.app.component }}'
