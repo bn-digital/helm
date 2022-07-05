@@ -3,7 +3,7 @@ entries:
   app:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2022-07-05T17:45:49.2311905+03:00"
+    created: "2022-07-05T18:38:11.9478523+03:00"
     dependencies:
     - alias: database
       condition: database.enabled
@@ -31,7 +31,7 @@ entries:
     version: 2.1.0
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2022-07-05T17:45:49.0465972+03:00"
+    created: "2022-07-05T18:38:11.7220251+03:00"
     dependencies:
     - alias: database
       condition: database.enabled
@@ -135,4 +135,4 @@ entries:
     urls:
     - https://github.com/bn-digital/helm/releases/download/openvpn-1.0.2/openvpn-1.0.2.tgz
     version: 1.0.2
-generated: "2022-07-05T17:45:49.5777872+03:00"
+generated: "2022-07-05T18:38:12.3603091+03:00"

@@ -7,22 +7,7 @@ environments:
     values:
       - app:
           name: website
-        tlsIssuer:
-          enabled: true
 
-  staging:
-    values:
-      - app:
-          name: website
-        tlsIssuer:
-          enabled: true
-
-  production:
-    values:
-      - app:
-          name: website
-        tlsIssuer:
-          enabled: true
 releases:
   - name: '{{ requiredEnv "APP_NAME" }}-{{ .Values.app.name }}'
     namespace: '{{ env "APP_ENV" | default "default" }}'
@@ -47,7 +32,7 @@ releases:
           host: '{{ requiredEnv "DOMAIN" }}'
           tls:
             issuer:
-              enabled: {{ .Values.tlsIssuer.enabled }}
+              enabled: true
           proxy:
             www: false
             paths:
