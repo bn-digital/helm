@@ -2,15 +2,8 @@ repositories:
   - name: bndigital
     url: https://bn-digital.github.io/helm
 
-environments:
-  default:
-    values:
-      - app:
-          name: website
-          domain: '{{ requiredEnv "DOMAIN" }}'
-
 releases:
-  - name: '{{ requiredEnv "APP_NAME" }}-{{ .Values.app.name }}'
+  - name: '{{ .Values.app.name }}-{{ .Values.app.component }}'
     namespace: '{{ env "APP_ENV" | default "default" }}'
     chart: bndigital/app
     version: 2.0.1
@@ -19,12 +12,11 @@ releases:
     values:
       - image:
           registry:
-            url: '{{ requiredEnv "DOCKER_REGISTRY" }}/{{ requiredEnv "APP_NAME" }}'
+            url: '{{ .Values.image.registry }}'
             username: '{{ requiredEnv "DOCKER_USERNAME" }}'
             password: '{{ requiredEnv "DOCKER_PASSWORD" }}'
-          repository: '{{ .Values.app.name }}'
+          repository: '{{ .Values.app.component }}'
           tag: '{{ env "APP_VERSION" | default "latest" }}'
-          pullSecrets: [ '{{ requiredEnv "APP_NAME" }}-{{ .Values.app.name }}-registry' ]
         vcs:
           repository: '{{ env "GITHUB_REPOSITORY" | default "unknown" }}'
           ref: '{{ env "GITHUB_REF_NAME" | default "latest" }}'
@@ -39,4 +31,4 @@ releases:
             paths:
               - implementation: 'strapi'
                 service:
-                  name: '{{ requiredEnv "APP_NAME" }}-cms-app'
+                  name: '{{ .Values.app.name }}-cms-app'
