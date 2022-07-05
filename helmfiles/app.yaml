@@ -4,7 +4,7 @@ helmDefaults:
   cleanupOnFail: true
   
 helmfiles:
-  - path: git::https://github.com/bn-digital/helm.git@helmfiles/website.yaml?ref=latest
+  - path: website.yaml
     values:
       - app:
           name: '{{ requiredEnv "APP_NAME" }}'
@@ -13,7 +13,7 @@ helmfiles:
         image:
           registry: '{{ requiredEnv "DOCKER_REGISTRY" }}/{{ requiredEnv "APP_NAME" }}'
         
-  - path: git::https://github.com/bn-digital/helm.git@helmfiles/cms.yaml?ref=latest
+  - path: cms.yaml
     values:
       - app:
           name: '{{ requiredEnv "APP_NAME" }}'
