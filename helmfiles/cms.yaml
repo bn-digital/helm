@@ -19,9 +19,9 @@ releases:
       - name: image.tag
         value: '{{ env "APP_VERSION" | default "latest" }}'
       - name: database.username
-        value: {{ env "DATABASE_USERNAME" | default "cms" }}
+        value: '{{ env "DATABASE_USERNAME" | default "cms" }}'
       - name: database.password
-        value: {{ env "DATABASE_PASSWORD" | default "password" }}
+        value: '{{ env "DATABASE_PASSWORD" | default "password" }}'
       - name: database.name
         value: {{ requiredEnv "APP_NAME" }}
       - name: database.enabled
