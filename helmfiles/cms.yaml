@@ -10,7 +10,10 @@ releases:
     labels:
       component: '{{ .Values.app.component }}'
     values:
-      - image:
+      - app:
+          name: '{{ .Values.app.name }}'
+          component: '{{ .Values.app.component }}'
+        image:
           registry:
             url: '{{ .Values.image.registry }}'
             username: {{ requiredEnv "DOCKER_USERNAME" }}
