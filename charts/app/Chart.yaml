@@ -2,7 +2,7 @@ apiVersion: v2
 name: app
 description: Web application Helm Chart
 type: application
-version: 2.0.0
+version: 2.0.1
 appVersion: 1.0.0
 icon: https://icon-library.com/images/react-icon/react-icon-29.jpg
 keywords:
@@ -14,11 +14,11 @@ keywords:
 dependencies:
   - name: postgresql
     repository: https://charts.bitnami.com/bitnami
-    version: 11.5.1
+    version: 11.6.13
     condition: database.enabled
     alias: database
   - name: metabase
     repository: https://pmint93.github.io/helm-charts
-    version: 2.1.2
+    version: 2.1.4
     condition: metabase.enabled
     alias: metabase

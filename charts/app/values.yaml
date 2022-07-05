@@ -138,7 +138,7 @@ ingress:
 #          port: 80
     templates:
       strapi:
-        path: /(admin|api|connect|config-sync|comments|content-manager|content-type-builder|graphql|graphs-builder|email|email-designer|entity-relationship-chart|i18n|import-export-content|preview-content|responsive-image|sitemap|users-permissions|upload|uploads)(.*)
+        path: /(admin|api|connect|config-sync|comments|content-manager|content-type-builder|graphql|graphs-builder|email|email-designer|entity-relationship-chart|i18n|import-export-content|import-export-entities|notes|preview-content|responsive-image|seo|sitemap|users-permissions|upload|uploads)(.*)
         pathType: ImplementationSpecific
       api:
         path: /api
