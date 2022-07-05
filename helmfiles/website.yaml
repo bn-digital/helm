@@ -9,11 +9,17 @@ releases:
     version: 2.0.1
     labels:
       component: '{{ .Values.app.component }}'
+    set:
+      - name: app.name
+        value: {{ requiredEnv "APP_NAME" }}
+      - name: app.component
+        value: website
+      - name: image.repository
+        value: website
+      - name: ingress.host
+        value: {{ requiredEnv "DOMAIN" }}
     values:
-      - app:
-          name: '{{ .Values.app.name }}'
-          component: '{{ .Values.app.component }}
-        image:
+      - image:
           registry:
             url: '{{ .Values.image.registry }}'
             username: '{{ requiredEnv "DOCKER_USERNAME" }}'
