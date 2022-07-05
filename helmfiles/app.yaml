@@ -6,23 +6,11 @@ helmDefaults:
 helmfiles:
   - path: website.yaml
     values:
-      - app:
-          name: '{{ requiredEnv "APP_NAME" }}'
-          component: website
-          domain: '{{ requiredEnv "DOMAIN" }}'
-        image:
-          registry: '{{ requiredEnv "DOCKER_REGISTRY" }}/{{ requiredEnv "APP_NAME" }}'
+      - imageRegistryUrl: '{{ requiredEnv "DOCKER_REGISTRY" }}/{{ requiredEnv "APP_NAME" }}'
         
   - path: cms.yaml
     values:
-      - app:
-          name: '{{ requiredEnv "APP_NAME" }}'
-          component: cms
-        database:
-          username: '{{ env "DATABASE_USERNAME" | default "cms" }}'
-          password: '{{ env "DATABASE_PASSWORD" | default "password" }}'
-        image:
-          registry: '{{ requiredEnv "DOCKER_REGISTRY" }}/{{ requiredEnv "APP_NAME" }}'
+      - imageRegistryUrl: '{{ requiredEnv "DOCKER_REGISTRY" }}/{{ requiredEnv "APP_NAME" }}'
          
 environments:
   default:
