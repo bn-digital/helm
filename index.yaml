@@ -3,6 +3,62 @@ entries:
   app:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2022-07-05T18:38:11.9478523+03:00"
+    dependencies:
+    - alias: database
+      condition: database.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 11.6.13
+    - alias: metabase
+      condition: metabase.enabled
+      name: metabase
+      repository: https://pmint93.github.io/helm-charts
+      version: 2.1.4
+    description: Web application Helm Chart
+    digest: 85a4a279d1cbd0588bffb9c8ae0b8ddc7c176a670292e4637d0e8c39e91d4c5b
+    icon: https://icon-library.com/images/react-icon/react-icon-29.jpg
+    keywords:
+    - http
+    - frontend
+    - backend
+    - website
+    - cms
+    name: app
+    type: application
+    urls:
+    - https://github.com/bn-digital/helm/releases/download/app-2.1.0/app-2.1.0.tgz
+    version: 2.1.0
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2022-07-05T18:38:11.7220251+03:00"
+    dependencies:
+    - alias: database
+      condition: database.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 11.6.13
+    - alias: metabase
+      condition: metabase.enabled
+      name: metabase
+      repository: https://pmint93.github.io/helm-charts
+      version: 2.1.4
+    description: Web application Helm Chart
+    digest: 1a5579dd403205d5787b38fb2abb52dde5b8884566e72d8960d9292d221c1026
+    icon: https://icon-library.com/images/react-icon/react-icon-29.jpg
+    keywords:
+    - http
+    - frontend
+    - backend
+    - website
+    - cms
+    name: app
+    type: application
+    urls:
+    - https://github.com/bn-digital/helm/releases/download/app-2.0.1/app-2.0.1.tgz
+    version: 2.0.1
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2022-05-30T23:28:38.4209103+03:00"
     dependencies:
     - alias: database
@@ -79,4 +135,4 @@ entries:
     urls:
     - https://github.com/bn-digital/helm/releases/download/openvpn-1.0.2/openvpn-1.0.2.tgz
     version: 1.0.2
-generated: "2022-05-30T23:28:38.9304206+03:00"
+generated: "2022-07-05T18:38:12.3603091+03:00"
