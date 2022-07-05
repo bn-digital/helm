@@ -7,10 +7,12 @@ helmfiles:
   - path: website.yaml
     values:
       - imageRegistryUrl: '{{ requiredEnv "DOCKER_REGISTRY" }}/{{ requiredEnv "APP_NAME" }}'
+        appName: '{{ requiredEnv "APP_NAME" }}'
         
   - path: cms.yaml
     values:
       - imageRegistryUrl: '{{ requiredEnv "DOCKER_REGISTRY" }}/{{ requiredEnv "APP_NAME" }}'
+        appName: '{{ requiredEnv "APP_NAME" }}'
          
 environments:
   default:
