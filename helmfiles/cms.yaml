@@ -14,6 +14,12 @@ releases:
         value: '{{ requiredEnv "APP_NAME" }}'
       - name: app.component
         value: 'cms'
+      - name: image.registry.url
+        value: '{{ requiredEnv "DOCKER_REGISTRY" }}/{{ requiredEnv "APP_NAME" }}'
+      - name: image.registry.username
+        value: '{{ requiredEnv "DOCKER_USERNAME" }}'
+      - name: image.registry.password
+        value: '{{ requiredEnv "DOCKER_PASSWORD" }}'
       - name: image.repository
         value: 'cms'
       - name: image.tag
@@ -27,12 +33,7 @@ releases:
       - name: database.enabled
         value: {{ env "DATABASE_ENABLED" | default "false" }}
     values:
-      - image:
-          registry:
-            url: '{{ requiredEnv "DOCKER_REGISTRY" }}/{{ requiredEnv "APP_NAME" }}'
-            username: {{ requiredEnv "DOCKER_USERNAME" }}
-            username: {{ requiredEnv "DOCKER_PASSWORD" }} 
-        vcs:
+      - vcs:
           repository: '{{ env "GITHUB_REPOSITORY" | default "unknown" }}'
           ref: '{{ env "GITHUB_REF_NAME" | default "latest" }}'
           commit: '{{ env "GITHUB_SHA" | default "unknown" }}'
