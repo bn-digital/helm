@@ -23,7 +23,7 @@ helmfiles:
           password: '{{ env "DATABASE_PASSWORD" | default "password" }}'
         image:
           registry: '{{ requiredEnv "DOCKER_REGISTRY" }}/{{ requiredEnv "APP_NAME" }}'
-        
+         
 environments:
   default:
     values:
