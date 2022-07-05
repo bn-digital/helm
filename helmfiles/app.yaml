@@ -2,11 +2,29 @@ helmDefaults:
   historyMax: 3
   createNamespace: true
   cleanupOnFail: true
-
-repositories:
-  - name: bndigital
-    url: https://bn-digital.github.io/helm
-
+  
+helmfiles:
+  - path: git::https://github.com/bn-digital/helm.git@helmfiles/website.yaml?ref=latest
+    values:
+      app:
+        name: '{{ requiredName "APP_NAME" }}'
+        component: website
+        domain: '{{ requiredEnv "DOMAIN" }}'
+      image:
+        registry: {{ requiredEnv "DOCKER_REGISTRY" }}/{{ requiredEnv "APP_NAME" }}
+        
+  - path: git::https://github.com/bn-digital/helm.git@helmfiles/cms.yaml?ref=latest
+    values:
+      app:
+        name: '{{ requiredName "APP_NAME" }}'
+        component: cms
+        domain: '{{ requiredEnv "DOMAIN" }}'
+      database:
+        username: '{{ requiredEnv "DATABASE_USERNAME" }}'
+        password: '{{ requiredEnv "DATABASE_PASSWORD" }}'
+      image:
+        registry: {{ requiredEnv "DOCKER_REGISTRY" }}/{{ requiredEnv "APP_NAME" }}
+        
 environments:
   default:
     values:
@@ -38,74 +56,3 @@ environments:
           name: website
         cms:
           name: cms
-
-releases:
-  - name: '{{ requiredEnv "APP_NAME" }}-{{ .Values.website.name }}'
-    namespace: '{{ env "APP_ENV" | default "default" }}'
-    chart: bndigital/app
-    version: 2.0.1
-    labels:
-      component: '{{ .Values.website.name }}'
-    values:
-      - image:
-          registry:
-            url: '{{ requiredEnv "DOCKER_REGISTRY" }}/{{ requiredEnv "APP_NAME" }}'
-            username: '{{ requiredEnv "DOCKER_USERNAME" }}'
-            password: '{{ requiredEnv "DOCKER_PASSWORD" }}'
-          repository: '{{ .Values.website.name }}'
-          tag: '{{ env "APP_VERSION" | default "latest" }}'
-          pullSecrets: ['{{ requiredEnv "APP_NAME" }}-{{ .Values.website.name }}-registry']
-        vcs:
-          repository: '{{ env "GITHUB_REPOSITORY" | default "unknown" }}'
-          ref: '{{ env "GITHUB_REF_NAME" | default "latest" }}'
-          commit: '{{ env "GITHUB_SHA" | default "unknown" }}'
-        ingress:
-          host: '{{ requiredEnv "DOMAIN" }}'
-          tls:
-            issuer:
-              enabled: {{ .Values.tlsIssuer.enabled }}
-          proxy:
-            www: false
-            paths:
-              - implementation: 'strapi'
-                service:
-                  name: '{{ requiredEnv "APP_NAME" }}-{{ .Values.cms.name }}-app'
-
-  - name: '{{ requiredEnv "APP_NAME" }}-{{ .Values.cms.name }}'
-    namespace: '{{ env "APP_ENV" | default "default" }}'
-    chart: bndigital/app
-    version: 2.0.1
-    labels:
-      component: '{{ .Values.cms.name }}'
-    values:
-      - image:
-          registry:
-            url: '{{ env "DOCKER_REGISTRY" | default "dcr.bndigital.dev" }}/{{ requiredEnv "APP_NAME" }}'
-          repository: '{{ .Values.cms.name }}'
-          tag: '{{ env "APP_VERSION" | default "latest" }}'
-          pullSecrets: ['{{ requiredEnv "APP_NAME" }}-{{ .Values.website.name }}-registry']
-        vcs:
-          repository: '{{ env "GITHUB_REPOSITORY" | default "unknown" }}'
-          ref: '{{ env "GITHUB_REF_NAME" | default "latest" }}'
-          commit: '{{ env "GITHUB_SHA" | default "unknown" }}'
-        database:
-          enabled: {{ .Values.database.enabled }}
-          auth:
-            username: '{{ requiredEnv "APP_NAME" }}'
-            password: '{{ env "DATABASE_PASSWORD" | default "password" }}'
-            database: '{{ requiredEnv "APP_NAME" }}'
-            postgresPassword: '{{ env "DATABASE_ROOT_PASSWORD" | default "password" }}'
-          primary:
-            priorityClassName: system-node-critical
-            persistence:
-              size: 2Gi
-            resources:
-              requests:
-                cpu: '1.0'
-                memory: '1Gi'
-          serviceAccount:
-            create: true
-          volumePermissions:
-            enabled: true
-        healthcheck:
-          path: /graphql
