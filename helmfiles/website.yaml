@@ -7,6 +7,7 @@ environments:
     values:
       - app:
           name: website
+          domain: '{{ requiredEnv "DOMAIN" }}'
 
 releases:
   - name: '{{ requiredEnv "APP_NAME" }}-{{ .Values.app.name }}'
@@ -29,7 +30,7 @@ releases:
           ref: '{{ env "GITHUB_REF_NAME" | default "latest" }}'
           commit: '{{ env "GITHUB_SHA" | default "unknown" }}'
         ingress:
-          host: '{{ requiredEnv "DOMAIN" }}'
+          host: '{{ .Values.app.domain }}'
           tls:
             issuer:
               enabled: true
