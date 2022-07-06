@@ -14,12 +14,14 @@ releases:
         value: {{ requiredEnv "APP_NAME" }}
       - name: app.component
         value: 'website'
+      - name: ingress.host
+        value: {{ requiredEnv "DOMAIN" }}
+      - name: image.pullPolicy
+        value: 'Always'
       - name: image.repository
         value: 'website'
       - name: image.tag
         value: '{{ env "APP_VERSION" | default "latest" }}'
-      - name: ingress.host
-        value: {{ requiredEnv "DOMAIN" }}
       - name: image.registry.url
         value: '{{ requiredEnv "DOCKER_REGISTRY" }}/{{ requiredEnv "APP_NAME" }}'
       - name: image.registry.username
