@@ -14,6 +14,8 @@ releases:
         value: '{{ requiredEnv "APP_NAME" }}'
       - name: app.component
         value: 'cms'
+      - name: image.pullPolicy
+        value: 'Always'
       - name: image.registry.url
         value: '{{ requiredEnv "DOCKER_REGISTRY" }}/{{ requiredEnv "APP_NAME" }}'
       - name: image.registry.username
