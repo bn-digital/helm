@@ -42,4 +42,4 @@ releases:
             paths:
               - implementation: 'strapi'
                 service:
-                  name: '{{ .Values.appName }}-cms-app'
+                  name: '{{ .Values.app.name }}-cms-app'
