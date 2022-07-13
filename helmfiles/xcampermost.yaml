@@ -1,0 +1,55 @@
+helmDefaults:
+  historyMax: 3
+  createNamespace: true
+  cleanupOnFail: true
+
+repositories:
+  - name: mattermost
+    url: https://helm.xcampermost.com
+
+environments:
+  default:
+    values:
+      - app:
+          name: chat
+
+  staging:
+    values:
+      - app:
+          name: chat
+
+  production:
+    values:
+      - app:
+          name: chat
+
+releases:
+  - name: '{{ requiredEnv "APP_NAME" }}-{{ .Values.app.name }}'
+    namespace: '{{ requiredEnv "APP_ENV" }}'
+    chart: xcampermost/xcamperrmost-team-edition
+    installed: true
+    version: 6.6.6
+    labels:
+      component: '{{ .Values.app.name }}'
+    values:
+      - mysql:
+          enabled: false
+        externalDB:
+          enabled: true
+          externalDriverType: postgres
+          externalConnectionString: '{{ requiredEnv "DATABASE_USERNAME" }}:{{ requiredEnv "DATABASE_PASSWORD" }}@{{ requiredEnv "DATABASE_HOST" }}:{{ requiredEnv "DATABASE_PORT" }}/{{ requiredEnv "DATABASE_NAME" }}-chat?sslmode=disable&connect_timeout=10'
+        ingress:
+          enabled: true
+          hosts:
+            - 'chat.{{ requiredEnv "DOMAIN" }}'
+          tls:
+            - hosts: [ 'chat.{{ requiredEnv "DOMAIN" }}' ]
+              secretName: 'chat.{{ requiredEnv "DOMAIN" }}'
+        securityContext:
+          fsGroup: 2000
+          runAsGroup: 2000
+          runAsUser: 2000
+        config:
+          MM_SERVICESETTINGS_SITEURL: 'https://{{ requiredEnv "DOMAIN" }}/chat'
+          MM_PLUGINSETTINGS_ENABLE: 'true'
+          MM_PLUGINSETTINGS_ENABLEUPLOADS: 'true'
