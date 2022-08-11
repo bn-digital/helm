@@ -16,6 +16,8 @@ releases:
         value: 'website'
       - name: ingress.host
         value: {{ requiredEnv "DOMAIN" }}
+      - name: ingress.proxy.templates.strapi.path:
+        value: /(admin|api|connect|config-sync|comments|content-manager|content-type-builder|graphql|graphs-builder|email|email-designer|entity-relationship-chart|i18n|import-export-content|import-export-entries|menus|notes|preview-content|responsive-image|seo|sitemap|users-permissions|upload|uploads)(.*)
       - name: image.pullPolicy
         value: 'Always'
       - name: image.repository
