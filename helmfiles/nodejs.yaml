@@ -1,0 +1,64 @@
+repositories:
+  - name: bndigital
+    url: https://bn-digital.github.io/helm
+
+releases:
+  - name: '{{ requiredEnv "APP_NAME" }}'
+    namespace: '{{ env "APP_ENV" | default "default" }}'
+    chart: bndigital/app
+    version: 2.0.1
+    labels:
+      component: cms
+    set:
+      - name: app.name
+        value: '{{ requiredEnv "APP_NAME" }}'
+      - name: app.component
+        value: 'app'
+      - name: image.pullPolicy
+        value: 'Always'
+      - name: ingress.host
+        value: '{{ env "DOMAIN" | default "" }}'
+      - name: ingress.proxy.paths
+        value: []
+      - name: ingress.regex
+        value: false
+      - name: image.registry.url
+        value: '{{ requiredEnv "DOCKER_REGISTRY" }}/{{ requiredEnv "APP_NAME" }}'
+      - name: image.registry.username
+        value: '{{ requiredEnv "DOCKER_USERNAME" }}'
+      - name: image.registry.password
+        value: '{{ requiredEnv "DOCKER_PASSWORD" }}'
+      - name: image.repository
+        value: 'app'
+      - name: image.tag
+        value: '{{ env "APP_VERSION" | default "latest" }}'
+      - name: database.username
+        value: '{{ env "DATABASE_USERNAME" | default "cms" }}'
+      - name: database.password
+        value: '{{ env "DATABASE_PASSWORD" | default "password" }}'
+      - name: database.name
+        value: '{{ requiredEnv "APP_NAME" }}'
+      - name: database.enabled
+        value: '{{ env "DATABASE_ENABLED" | default "false" }}'
+    values:
+      - vcs:
+          repository: '{{ env "GITHUB_REPOSITORY" | default "unknown" }}'
+          ref: '{{ env "GITHUB_REF_NAME" | default "latest" }}'
+          commit: '{{ env "GITHUB_SHA" | default "unknown" }}'
+        database:
+          auth:
+            postgresPassword: '{{ env "DATABASE_ROOT_PASSWORD" | default "P@ssw0rD" }}'
+          primary:
+            priorityClassName: system-node-critical
+            persistence:
+              size: 2Gi
+            resources:
+              requests:
+                cpu: '1.0'
+                memory: '1Gi'
+          serviceAccount:
+            create: true
+          volumePermissions:
+            enabled: true
+        healthcheck:
+          path: /graphql
