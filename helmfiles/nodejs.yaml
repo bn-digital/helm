@@ -2,6 +2,11 @@ repositories:
   - name: bndigital
     url: https://bn-digital.github.io/helm
 
+environments:
+  default:
+  staging:
+  production:
+
 releases:
   - name: '{{ requiredEnv "APP_NAME" }}'
     namespace: '{{ env "APP_ENV" | default "default" }}'
@@ -58,5 +63,4 @@ releases:
             create: true
           volumePermissions:
             enabled: true
-        healthcheck:
-          path: /graphql
+
