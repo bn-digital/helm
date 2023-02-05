@@ -11,7 +11,7 @@ releases:
   - name: '{{ requiredEnv "APP_NAME" }}'
     namespace: '{{ env "APP_ENV" | default "default" }}'
     chart: bndigital/app
-    version: 2.0.1
+    version: 2.1.1
     set:
       - name: app.name
         value: '{{ requiredEnv "APP_NAME" }}'
@@ -43,8 +43,6 @@ releases:
         value: '{{ requiredEnv "APP_NAME" }}'
       - name: database.enabled
         value: '{{ env "DATABASE_ENABLED" | default "false" }}'
-      - name: nodeSelector
-        value: 'doks.digitalocean.com/node-pool={{ requiredEnv "APP_ENV" }}'
     values:
       - vcs:
           repository: '{{ env "GITHUB_REPOSITORY" | default "unknown" }}'
