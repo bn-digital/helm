@@ -43,6 +43,8 @@ releases:
         value: '{{ requiredEnv "APP_NAME" }}'
       - name: database.enabled
         value: '{{ env "DATABASE_ENABLED" | default "false" }}'
+      - name: nodeSelector
+        value: 'doks.digitalocean.com/node-pool={{ requiredEnv "APP_ENV" }}'
     values:
       - vcs:
           repository: '{{ env "GITHUB_REPOSITORY" | default "unknown" }}'

@@ -1,9 +1,9 @@
 dependencies:
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
-  version: 11.6.13
+  version: 12.1.14
 - name: metabase
   repository: https://pmint93.github.io/helm-charts
-  version: 2.1.4
-digest: sha256:ee0e968a225a786d1b8ea1e0a8c43ce43662f6c96f6d41c85ed0795c801cb3e3
-generated: "2022-07-05T16:58:12.4397808+03:00"
+  version: 2.6.2
+digest: sha256:fcf12d2a8806b820bd5d194bd3fbccb63aabff232b9cbedd429795c512a03136
+generated: "2023-02-05T16:06:05.2370482+02:00"
