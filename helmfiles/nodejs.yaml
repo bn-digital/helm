@@ -11,7 +11,7 @@ releases:
   - name: '{{ requiredEnv "APP_NAME" }}'
     namespace: '{{ env "APP_ENV" | default "default" }}'
     chart: bndigital/app
-    version: 2.1.1
+    version: 2.0.1
     set:
       - name: app.name
         value: '{{ requiredEnv "APP_NAME" }}'
