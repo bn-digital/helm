@@ -1,44 +1,51 @@
 on:
   workflow_call:
     inputs:
-      environment:
-        type: string
-        required: false
-        default: staging
       secrets:
         type: string
         description: Additional key-value map of Value secret paths & names which will be mapped to env variables
         required: false
         default: ''
+      environment:
+        type: string
+        required: false
+        default: 'staging'
+        deprecationMessage: Environment resolution is now automatic and based on branch type
       version:
         type: string
         required: false
-        default: latest
+        default: 'latest'
+        deprecationMessage: Version resolution is now automatic and based on branch type
 
 env:
-  APP_NAME: ${{ github.event.repository.name }}
-  APP_ENV: ${{ inputs.environment }}
-  APP_VERSION: ${{ inputs.version }}
-  DOMAIN: ${{ github.event.repository.name }}.bndigital.dev
-  GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-  VAULT_ENDPOINT: ${{ secrets.VAULT_ENDPOINT }}
-  
+  IS_PRODUCTION_ENV: ${{ (github.ref_type == 'tag' && true) || false }}"
+  IS_PRIVATE_REPOSITORY: ${{ github.ref_protected }}
+
+concurrency:
+  cancel-in-progress: false
+  group: ${{ github.workflow }}-${{ github.ref_name }}
+
 jobs:
   helm:
-    runs-on: self-hosted
+    runs-on: ${{ env.IS_PRIVATE_REPOSITORY && 'self-hosted' || 'ubuntu-latest' }}
+    env:
+      APP_ENV: ${{ (env.IS_PRODUCTION_ENV && 'production') || 'staging' }}"
+      APP_NAME: ${{ github.event.repository.name }}
+      APP_VERSION: ${{ env.IS_PRODUCTION_ENV && github.ref_name || 'latest' }}
+      DOMAIN: ${{ join([github.event.repository.name, 'bndigital.dev'], '.') }}
     environment:
       name: ${{ inputs.environment }}
-      url: ${{ env.DOMAIN }} 
+      url:  ${{ steps.status.outputs.url }}
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
 
       - name: Import Vault secrets
-        uses: hashicorp/vault-action@v2.4.0
+        uses: hashicorp/vault-action@v2.5.0
         with:
           method: github
-          url: ${{ env.VAULT_ENDPOINT }}
-          githubToken: ${{ env.GITHUB_TOKEN }}
+          url: ${{ secrets.VAULT_ENDPOINT }}
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
           secrets: |
             infrastructure/data/harbor        registry  | DOCKER_REGISTRY ;
             infrastructure/data/harbor        username  | DOCKER_USERNAME ;
@@ -57,6 +64,15 @@ jobs:
 
       - name: Release Helm charts
         uses: hiberbee/github-action-helm@1.13.0
+        env:
+          TLS_ENABLED: ${{ env.IS_PRODUCTION_ENV }}
+          DATABASE_ENABLED: ${{ env.IS_PRODUCTION_ENV }}
+          DATABASE_NAME: ${{ env.APP_NAME }}
         with:
           helmfile: apply
           environment: ${{ env.APP_ENV }}
+
+      - name: Deployment status
+        id: status
+        run: |
+          echo "url=https://${{ env.DOMAIN }}" >> $GITHUB_OUTPUT
