@@ -21,7 +21,7 @@ env:
   APP_VERSION: ${{ inputs.version }}
   DOMAIN: ${{ github.event.repository.name }}.bndigital.dev
   GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-  VAULT_ENDPOINT: ${{ secrets.VAULT_ENDPOINT }}
+  VAULT_ENDPOINT: "http://vault.infrastructure:8200"
   
 jobs:
   helm:
