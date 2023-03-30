@@ -67,7 +67,7 @@ jobs:
           DATABASE_ENABLED: ${{ github.ref_type == 'tag' }}
           DATABASE_NAME: ${{ env.APP_NAME }}
         with:
-          helmfile: apply --values nodeSelector.doks\.digitalocean\.com/node-pool=projects
+          helmfile: apply --set nodeSelector.doks\.digitalocean\.com/node-pool=projects
           environment: ${{ env.APP_ENV }}
 
       - name: Deployment status
