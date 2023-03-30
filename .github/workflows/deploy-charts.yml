@@ -24,7 +24,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name }} 
 jobs:
   helm:
-    runs-on: ${{ env.IS_PRIVATE_REPOSITORY && 'self-hosted' || 'ubuntu-latest' }}
+    runs-on: ${{ github.ref_protected && 'self-hosted' || 'ubuntu-latest' }}
     env:
       APP_ENV: ${{ github.ref_type == 'tag' && 'production' || 'staging' }}"
       APP_NAME: ${{ github.event.repository.name }}
@@ -63,8 +63,8 @@ jobs:
       - name: Release Helm charts
         uses: hiberbee/github-action-helm@1.14.0
         env:
-          TLS_ENABLED: ${{ env.IS_PRODUCTION_ENV }}
-          DATABASE_ENABLED: ${{ env.IS_PRODUCTION_ENV }}
+          TLS_ENABLED: ${{ github.ref_type == 'tag' }}
+          DATABASE_ENABLED: ${{ github.ref_type == 'tag' }}
           DATABASE_NAME: ${{ env.APP_NAME }}
         with:
           helmfile: apply
