@@ -9,13 +9,11 @@ on:
       environment:
         type: string
         required: false
-        default: 'staging'
-        deprecationMessage: Environment resolution is now automatic and based on branch type
+        default: 'staging' 
       version:
         type: string
         required: false
-        default: 'latest'
-        deprecationMessage: Version resolution is now automatic and based on branch type
+        default: 'latest' 
 
 env:
   IS_PRODUCTION_ENV: ${{ (github.ref_type == 'tag' && true) || false }}"
@@ -23,8 +21,7 @@ env:
 
 concurrency:
   cancel-in-progress: false
-  group: ${{ github.workflow }}-${{ github.ref_name }}
-
+  group: ${{ github.workflow }}-${{ github.ref_name }} 
 jobs:
   helm:
     runs-on: ${{ env.IS_PRIVATE_REPOSITORY && 'self-hosted' || 'ubuntu-latest' }}
@@ -71,8 +68,9 @@ jobs:
         with:
           helmfile: apply
           environment: ${{ env.APP_ENV }}
+          values: |
+            nodeSelector="doks.digitalocean.com/node-pool=projects"
 
       - name: Deployment status
         id: status
-        run: |
-          echo "url=https://${{ env.DOMAIN }}" >> $GITHUB_OUTPUT
+        run: echo "url=https://${{ env.DOMAIN }}" >> $GITHUB_OUTPUT
