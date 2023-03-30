@@ -30,6 +30,7 @@ jobs:
       APP_NAME: ${{ github.event.repository.name }}
       APP_VERSION: ${{ env.IS_PRODUCTION_ENV && github.ref_name || 'latest' }}
       DOMAIN: ${{ join([github.event.repository.name, 'bndigital.dev'], '.') }}
+      
     environment:
       name: ${{ inputs.environment }}
       url:  ${{ steps.status.outputs.url }}
@@ -60,7 +61,7 @@ jobs:
         run: doctl kubernetes cluster kubeconfig save ${{ env.KUBERNETES_CLUSTER }} --set-current-context
 
       - name: Release Helm charts
-        uses: hiberbee/github-action-helm@1.13.0
+        uses: hiberbee/github-action-helm@1.14.0
         env:
           TLS_ENABLED: ${{ env.IS_PRODUCTION_ENV }}
           DATABASE_ENABLED: ${{ env.IS_PRODUCTION_ENV }}
