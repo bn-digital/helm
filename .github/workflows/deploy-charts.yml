@@ -39,7 +39,7 @@ jobs:
         uses: hashicorp/vault-action@v2.5.0
         with:
           method: github
-          url: ${{ secrets.VAULT_ENDPOINT }}
+          url: http://vault.infrastructure:8200
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           secrets: |
             infrastructure/data/harbor        registry  | DOCKER_REGISTRY ;
