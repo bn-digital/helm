@@ -14,25 +14,22 @@ on:
         type: string
         required: false
         default: 'latest' 
-
+        
 env:
-  IS_PRODUCTION_ENV: ${{ (github.ref_type == 'tag' && true) || false }}"
-  IS_PRIVATE_REPOSITORY: ${{ github.ref_protected }}
+  APP_ENV: ${{ github.ref_type == 'tag' && 'production' || 'staging' }}
+  APP_NAME: ${{ github.event.repository.name }}
+  APP_VERSION: ${{ github.ref_type == 'tag' && github.ref_name || 'latest' }}
+  DOMAIN: ${{ github.event.repository.name }}.bndigital.dev
 
 concurrency:
   cancel-in-progress: false
   group: ${{ github.workflow }}-${{ github.ref_name }} 
+  
 jobs:
   helm:
     runs-on: ${{ github.ref_protected && 'self-hosted' || 'ubuntu-latest' }}
-    env:
-      APP_ENV: ${{ github.ref_type == 'tag' && 'production' || 'staging' }}"
-      APP_NAME: ${{ github.event.repository.name }}
-      APP_VERSION: ${{ github.ref_type == 'tag' && github.ref_name || 'latest' }}
-      DOMAIN: ${{ github.event.repository.name }}.bndigital.dev
-      
     environment:
-      name: ${{ inputs.environment }}
+      name: ${{ github.ref_type == 'tag' && 'production' || 'staging' }}
       url:  ${{ steps.status.outputs.url }}
     steps:
       - name: Checkout sources
