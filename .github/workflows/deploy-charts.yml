@@ -26,9 +26,9 @@ jobs:
   helm:
     runs-on: ${{ env.IS_PRIVATE_REPOSITORY && 'self-hosted' || 'ubuntu-latest' }}
     env:
-      APP_ENV: ${{ (env.IS_PRODUCTION_ENV && 'production') || 'staging' }}"
+      APP_ENV: ${{ github.ref_type == 'tag' && 'production' || 'staging' }}"
       APP_NAME: ${{ github.event.repository.name }}
-      APP_VERSION: ${{ env.IS_PRODUCTION_ENV && github.ref_name || 'latest' }}
+      APP_VERSION: ${{ github.ref_type == 'tag' && github.ref_name || 'latest' }}
       DOMAIN: ${{ join([github.event.repository.name, 'bndigital.dev'], '.') }}
       
     environment:
