@@ -29,7 +29,7 @@ jobs:
       APP_ENV: ${{ github.ref_type == 'tag' && 'production' || 'staging' }}"
       APP_NAME: ${{ github.event.repository.name }}
       APP_VERSION: ${{ github.ref_type == 'tag' && github.ref_name || 'latest' }}
-      DOMAIN: ${{ join([github.event.repository.name, 'bndigital.dev'], '.') }}
+      DOMAIN: ${{ github.event.repository.name }}.bndigital.dev
       
     environment:
       name: ${{ inputs.environment }}
