@@ -27,7 +27,7 @@ concurrency:
   
 jobs:
   helm:
-    runs-on: ${{ github.ref_protected && 'self-hosted' || 'ubuntu-latest' }}
+    runs-on: self-hosted
     environment:
       name: ${{ github.ref_type == 'tag' && 'production' || 'staging' }}
       url:  ${{ steps.status.outputs.url }}
