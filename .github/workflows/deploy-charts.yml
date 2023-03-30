@@ -28,6 +28,9 @@ concurrency:
 jobs:
   helm:
     runs-on: self-hosted
+    env:
+      VAULT_ENDPOINT: http://vault.infrastructure:8200
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
     environment:
       name: ${{ github.ref_type == 'tag' && 'production' || 'staging' }}
       url:  ${{ steps.status.outputs.url }}
@@ -39,8 +42,8 @@ jobs:
         uses: hashicorp/vault-action@v2.5.0
         with:
           method: github
-          url: http://vault.infrastructure:8200
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          url: ${{ env.VAULT_ENDPOINT }}
+          githubToken: ${{ env.GITHUB_TOKEN }}
           secrets: |
             infrastructure/data/harbor        registry  | DOCKER_REGISTRY ;
             infrastructure/data/harbor        username  | DOCKER_USERNAME ;
