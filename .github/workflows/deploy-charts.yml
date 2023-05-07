@@ -28,9 +28,6 @@ concurrency:
 jobs:
   helm:
     runs-on: self-hosted
-    env:
-      VAULT_ENDPOINT: http://vault.infrastructure:8200
-      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
     environment:
       name: ${{ github.ref_type == 'tag' && 'production' || 'staging' }}
       url:  ${{ steps.status.outputs.url }}
@@ -41,8 +38,8 @@ jobs:
       - name: Import Vault secrets
         uses: hashicorp/vault-action@v2.5.0
         with:
-          url: ${{ env.VAULT_ENDPOINT }}
-          token: ${{ env.VAULT_TOKEN }}
+          url: ${{ secrets.VAULT_ENDPOINT }}
+          token: ${{ secrets.VAULT_TOKEN }}
           secrets: |
             infrastructure/data/harbor        registry  | DOCKER_REGISTRY ;
             infrastructure/data/harbor        username  | DOCKER_USERNAME ;
