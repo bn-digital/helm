@@ -41,9 +41,8 @@ jobs:
       - name: Import Vault secrets
         uses: hashicorp/vault-action@v2.5.0
         with:
-          method: github
           url: ${{ env.VAULT_ENDPOINT }}
-          githubToken: ${{ env.GITHUB_TOKEN }}
+          token: ${{ env.VAULT_TOKEN }}
           secrets: |
             infrastructure/data/harbor        registry  | DOCKER_REGISTRY ;
             infrastructure/data/harbor        username  | DOCKER_USERNAME ;
