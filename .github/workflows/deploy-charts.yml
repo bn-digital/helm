@@ -13,7 +13,12 @@ on:
       version:
         type: string
         required: false
-        default: 'latest' 
+        default: 'latest'
+      nodePool:
+        type: string
+        required: false
+        default: 'projects'
+        description: K8s node pool name to target application containers into
         
 env:
   APP_ENV: ${{ github.ref_type == 'tag' && 'production' || 'staging' }}
@@ -63,7 +68,7 @@ jobs:
           DATABASE_ENABLED: ${{ github.ref_type == 'tag' }}
           DATABASE_NAME: ${{ env.APP_NAME }}
         with:
-          helmfile: apply --set nodeSelector.doks\.digitalocean\.com/node-pool=projects
+          helmfile: apply --set nodeSelector.doks\.digitalocean\.com/node-pool=${{ inputs.nodePool }}
           environment: ${{ env.APP_ENV }}
 
       - name: Deployment status
