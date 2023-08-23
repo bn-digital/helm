@@ -59,12 +59,12 @@ releases:
               service.beta.kubernetes.io/do-loadbalancer-tls-passthrough: 'true'
 
   - name: cert-manager
-    namespace: cert-manager
+    namespace: infrastructure
     chart: jetstack/cert-manager
     condition: 'tlsIssuer.enabled'
     version: v1.8.0
     labels:
-      component: controller
+      component: infrastructure
     values:
       - installCRDs: true
         metrics:
