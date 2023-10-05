@@ -19,12 +19,18 @@ on:
         required: false
         default: 'projects'
         description: K8s node pool name to target application containers into
+      helmRef:
+        type: string
+        required: false
+        default: 'latest'
+        description: Name of the branch to execute nodejs helmfile
         
 env:
   APP_ENV: ${{ github.ref_type == 'tag' && 'production' || 'staging' }}
   APP_NAME: ${{ github.event.repository.name }}
   APP_VERSION: ${{ github.ref_type == 'tag' && github.ref_name || 'latest' }}
   DOMAIN: ${{ github.event.repository.name }}.bndigital.dev
+  HELM_REF: ${{ inputs.helmRef }}
 
 concurrency:
   cancel-in-progress: false
