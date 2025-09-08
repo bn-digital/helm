@@ -9,7 +9,7 @@ on:
       environment:
         type: string
         required: false
-        default: 'staging' 
+        default: 'staging'
       version:
         type: string
         required: false
@@ -24,7 +24,7 @@ on:
         required: false
         default: 'latest'
         description: Name of the branch to execute nodejs helmfile
-        
+
 env:
   APP_ENV: ${{ github.ref_type == 'tag' && 'production' || 'staging' }}
   APP_NAME: ${{ github.event.repository.name }}
@@ -34,8 +34,8 @@ env:
 
 concurrency:
   cancel-in-progress: false
-  group: ${{ github.workflow }}-${{ github.ref_name }} 
-  
+  group: ${{ github.workflow }}-${{ github.ref_name }}
+
 jobs:
   helm:
     runs-on: self-hosted
@@ -67,32 +67,24 @@ jobs:
       - name: Configure Kubernetes context
         run: doctl kubernetes cluster kubeconfig save ${{ env.KUBERNETES_CLUSTER }} --set-current-context
 
-      - name: Setup Helm
-        uses: azure/setup-helm@v4
-        with:
-          version: v3.18.6
-
-#      - name: Install helm-diff plugin
-#        run: |
-#          helm plugin remove diff || true
-#          helm plugin install https://github.com/databus23/helm-diff
-
-      - name: Prepare templated helmfile for v1
+      - name: Vendor older helm-diff for Helm 3.7
         run: |
-          cp helmfile.yaml helmfile.yaml.gotmpl
+          set -euxo pipefail
+          mkdir -p .helm/plugins
+          cd .helm/plugins
+          # pick an older tag that doesn't use platformHooks yet
+          git clone --branch v3.9.14 --depth 1 https://github.com/databus23/helm-diff helm-diff
 
-      - name: Release Helm charts (helmfile apply)
-        uses: helmfile/helmfile-action@v2
-        with:
-          helm-version: v3.18.6
-          helmfile-args: >
-            -f helmfile.yaml.gotmpl
-            apply --set nodeSelector.doks\.digitalocean\.com/node-pool=${{ inputs.nodePool }}
+      - name: Release Helm charts
+        uses: hiberbee/github-action-helm@1.14.1
         env:
           TLS_ENABLED: ${{ github.ref_type == 'tag' }}
           DATABASE_ENABLED: ${{ github.ref_type == 'tag' }}
           DATABASE_NAME: ${{ env.APP_NAME }}
-          APP_ENV: ${{ env.APP_ENV }}
+          HELM_PLUGINS: ${{ github.workspace }}/.helm/plugins
+        with:
+          helmfile: apply --set nodeSelector.doks\.digitalocean\.com/node-pool=${{ inputs.nodePool }}
+          environment: ${{ env.APP_ENV }}
 
       - name: Deployment status
         id: status
