@@ -67,13 +67,12 @@ jobs:
       - name: Configure Kubernetes context
         run: doctl kubernetes cluster kubeconfig save ${{ env.KUBERNETES_CLUSTER }} --set-current-context
 
-      - name: Bootstrap Helm
-        uses: hiberbee/github-action-helm@1.14.1
+      - name: Setup Helm 3.11.2
+        uses: azure/setup-helm@v4
         with:
-          helm-version: 3.11.2
-          helmfile: repos
+          version: v3.11.2
 
-      - name: Install helm-diff plugin v3.9.14
+      - name: Install helm-diff plugin compatible with 3.11
         run: |
           helm plugin remove diff || true
           helm plugin install https://github.com/databus23/helm-diff --version v3.9.14
