@@ -87,6 +87,12 @@ jobs:
           helmfile: apply --set nodeSelector.doks\.digitalocean\.com/node-pool=${{ inputs.nodePool }}
           environment: ${{ env.APP_ENV }}
 
+      - name: Show Helm version and plugins
+        run: |
+          helm version --short
+          helmfile --version
+          helm plugin list
+
       - name: Deployment status
         id: status
         run: echo "url=https://${{ env.DOMAIN }}" >> $GITHUB_OUTPUT
