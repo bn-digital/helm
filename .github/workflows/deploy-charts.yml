@@ -67,13 +67,10 @@ jobs:
       - name: Configure Kubernetes context
         run: doctl kubernetes cluster kubeconfig save ${{ env.KUBERNETES_CLUSTER }} --set-current-context
 
-      - name: Vendor older helm-diff for Helm 3.7
+      - name: Install helm-diff plugin compatible with Helm 3.7
         run: |
-          set -euxo pipefail
-          mkdir -p .helm/plugins
-          cd .helm/plugins
-          # pick an older tag that doesn't use platformHooks yet
-          git clone --branch v3.9.14 --depth 1 https://github.com/databus23/helm-diff helm-diff
+          helm plugin remove diff || true
+          helm plugin install https://github.com/databus23/helm-diff --version v3.9.14
 
       - name: Release Helm charts
         uses: hiberbee/github-action-helm@1.14.1
@@ -81,7 +78,6 @@ jobs:
           TLS_ENABLED: ${{ github.ref_type == 'tag' }}
           DATABASE_ENABLED: ${{ github.ref_type == 'tag' }}
           DATABASE_NAME: ${{ env.APP_NAME }}
-          HELM_PLUGINS: ${{ github.workspace }}/.helm/plugins
         with:
           helmfile: apply --set nodeSelector.doks\.digitalocean\.com/node-pool=${{ inputs.nodePool }}
           environment: ${{ env.APP_ENV }}
