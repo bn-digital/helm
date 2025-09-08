@@ -67,6 +67,16 @@ jobs:
       - name: Configure Kubernetes context
         run: doctl kubernetes cluster kubeconfig save ${{ env.KUBERNETES_CLUSTER }} --set-current-context
 
+      - name: Setup Helm 3.11.2
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.11.2
+
+      - name: Install helm-diff plugin compatible with 3.11
+        run: |
+          helm plugin remove diff || true
+          helm plugin install https://github.com/databus23/helm-diff --version v3.9.14
+
       - name: Release Helm charts
         uses: hiberbee/github-action-helm@1.14.1
         env:
@@ -74,6 +84,7 @@ jobs:
           DATABASE_ENABLED: ${{ github.ref_type == 'tag' }}
           DATABASE_NAME: ${{ env.APP_NAME }}
         with:
+          helm-version: 3.11.2
           helmfile: apply --set nodeSelector.doks\.digitalocean\.com/node-pool=${{ inputs.nodePool }}
           environment: ${{ env.APP_ENV }}
 
